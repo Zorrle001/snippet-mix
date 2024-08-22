@@ -1,0 +1,85 @@
+.cardHolder {
+    position: relative;
+    width: 100%;
+    height: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    padding-inline: 5rem;
+
+    &:last-of-type {
+        padding-inline: 10rem;
+    }
+}
+
+#colorCard {
+    //background-color: blueviolet;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding: 0.5rem;
+    width: 7.5rem;
+
+    border-radius: 0.35rem;
+
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: pointer;
+
+    border: 1px solid transparent;
+
+    display: grid;
+    place-items: center;
+
+    transition: 0.15s filter linear;
+
+    &:hover {
+        filter: brightness(0.8);
+    }
+
+    &.active {
+        outline: 2px solid white;
+        outline-offset: 0.2rem;
+    }
+
+    &.purple {
+        background-image: linear-gradient(180deg, #9740b9, #65188c);
+        border-color: #975cb3;
+    }
+
+    &.magenta {
+        background-image: linear-gradient(180deg, #ff2e9a, #bb126a);
+        border-color: #ea67b3;
+    }
+    &.red {
+        background-image: linear-gradient(180deg, #e60000, #990001);
+        border-color: #fa7c7e;
+    }
+    &.orange {
+        background-image: linear-gradient(180deg, #ff7100, #d64c06);
+        border-color: #fb9451;
+    }
+    &.yellow {
+        background-image: linear-gradient(180deg, #cab600, #b58f01);
+        border-color: #f1da4c;
+        color: black;
+    }
+    &.blue {
+        background-image: linear-gradient(180deg, #2655ff, #0713fe);
+        border-color: #555cfb;
+    }
+    &.cyan {
+        background-image: linear-gradient(180deg, #0096fe, #0060af);
+        border-color: #5bbbfa;
+    }
+    &.green {
+        background-image: linear-gradient(180deg, #1ca76f, #007644);
+        border-color: #52d28b;
+    }
+    &.gray {
+        background-image: linear-gradient(180deg, #929293, #5f5f60);
+        border-color: #9b9a9b;
+    }
+}

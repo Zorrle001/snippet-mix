@@ -1,0 +1,130 @@
+#snippedCard {
+    position: relative;
+    width: 7.5rem;
+    height: 7.5rem;
+    background-image: linear-gradient(180deg, #e5e5e5, #cecece);
+    --snippetColor: #e5cf2e;
+
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+
+    transition: 0.15s filter linear;
+
+    &:hover {
+        filter: brightness(0.8);
+    }
+
+    #snippedIcon {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        font-size: 3.5rem;
+        //color: var(--snippedColor);
+        //color: lighten(#e5cf2e, 7%);
+        color: var(--snippetColor);
+        opacity: 60%;
+    }
+
+    &.yellow #snippedIcon {
+        opacity: 75%;
+    }
+
+    #snippedID {
+        position: absolute;
+        top: 0.5rem;
+        left: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    #snippedName {
+        position: absolute;
+        bottom: 1.25rem;
+        font-size: 1.2rem;
+        left: 0px;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        text-align: center;
+        font-weight: 600;
+        line-height: 1;
+        min-height: 2lh;
+        max-height: 3lh;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    #snippedInfo {
+        position: absolute;
+        left: 0px;
+        bottom: 0px;
+        width: 100%;
+        height: 0.75rem;
+        color: black;
+
+        display: flex;
+        gap: 0.1rem;
+        align-items: center;
+        justify-content: flex-end;
+        z-index: 12;
+
+        font-size: 0.6rem;
+        padding-right: 0.25rem;
+
+        .channelCount {
+            margin-right: 0.15rem;
+        }
+
+        > i {
+            font-size: 0.5rem;
+
+            &.faderIndicator {
+                color: rgb(142, 91, 209);
+            }
+            &.gainIndicator {
+                color: rgb(65, 166, 199);
+            }
+        }
+    }
+
+    &::after {
+        content: "";
+        position: absolute;
+        left: 0px;
+        bottom: 0px;
+        width: 100%;
+        height: 0.75rem;
+        background-color: var(--snippetColor);
+    }
+
+    &.purple {
+        --snippetColor: #651c8c;
+    }
+
+    &.magenta {
+        --snippetColor: #e7268a;
+    }
+    &.red {
+        --snippetColor: #d92b2b;
+    }
+    &.orange {
+        --snippetColor: #e5742e;
+    }
+    &.yellow {
+        --snippetColor: #e5cf2e;
+    }
+    &.blue {
+        --snippetColor: #1745e2;
+    }
+    &.cyan {
+        --snippetColor: #008ae7;
+    }
+    &.green {
+        --snippetColor: #1ca36c;
+    }
+    &.gray {
+        --snippetColor: #a1a1a5;
+    }
+}

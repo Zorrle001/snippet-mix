@@ -1,0 +1,95 @@
+@property --channelColor {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #2e9ce5;
+}
+
+#channelCard {
+    position: relative;
+    width: 7.5rem;
+    height: 7.5rem;
+    background-image: linear-gradient(180deg, #e5e5e5, #cecece);
+    //--channelColor: #2e9ce5;
+
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+
+    //transition: 0.15s filter linear;
+
+    margin-inline: 0.25rem;
+
+    transition: 0.35s ease;
+    transition-property: all, --channelColor;
+
+    outline-offset: -3px;
+    outline: 3px solid transparent;
+
+    //-webkit-tap-highlight-color: transparent;
+
+    @media (hover: hover) {
+        &:hover {
+            filter: brightness(0.85);
+        }
+    }
+
+    /*&:active {
+        filter: contrast(2);
+    }*/
+    //}
+
+    #channelIcon {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        font-size: 3.5rem;
+        //color: var(--channelColor);
+        //color: lighten(#e5cf2e, 7%);
+        color: var(--channelColor);
+        opacity: 75%;
+    }
+
+    #channelID {
+        position: absolute;
+        top: 0.5rem;
+        left: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    #channelName {
+        position: absolute;
+        bottom: 1.25rem;
+        font-size: 1.2rem;
+        left: 0px;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        text-align: center;
+        font-weight: 600;
+        line-height: 1;
+        min-height: 2lh;
+        max-height: 3lh;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &::after {
+        content: "";
+        position: absolute;
+        left: 0px;
+        bottom: 0px;
+        width: 100%;
+        height: 0.75rem;
+        background-color: var(--channelColor);
+    }
+
+    &.selected {
+        //outline: 2px solid white;
+        //outline-offset: 0.25rem;
+        outline-offset: -3px;
+        outline: 3px solid #1ca36c;
+        --channelColor: #1ca36c;
+    }
+}
