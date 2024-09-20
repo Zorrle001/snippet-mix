@@ -8,6 +8,7 @@ type Props = {
     channelCount: number;
     faderIndicator: boolean;
     gainIndicator: boolean;
+    onClick?: () => void;
 };
 export default function SnippetCard({
     id,
@@ -17,9 +18,14 @@ export default function SnippetCard({
     channelCount,
     faderIndicator,
     gainIndicator,
+    onClick,
 }: Props) {
     return (
-        <article id={styles.snippedCard} className={styles[color[1]]}>
+        <article
+            id={styles.snippedCard}
+            className={styles[color[1]]}
+            onClick={onClick}
+        >
             <i className={icon} id={styles.snippedIcon}></i>
             <p id={styles.snippedID}>Snp {id}</p>
             <p id={styles.snippedName}>{name}</p>

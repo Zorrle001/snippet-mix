@@ -9,14 +9,15 @@ import PopUp, {
 import SnippetCard from "@/components/SnippetCard";
 import { useState } from "react";
 import {
-    SnippetObjectChannelsType,
-    SnippetObjectType,
+    SnippetObjChannelListType,
+    SnippetObjType,
 } from "../CreateSnippetPopUp";
 
 type Props = {
-    onConfirm: (snippetChannels: SnippetObjectChannelsType) => void;
-    onCancel: (snippetChannels: SnippetObjectChannelsType) => void;
+    onConfirm: (snippetChannels: SnippetObjChannelListType) => void;
+    onCancel: (snippetChannels: SnippetObjChannelListType) => void;
 };
+
 export default function SnippetInputPopUp({
     snippetID,
     snippetName,
@@ -25,12 +26,13 @@ export default function SnippetInputPopUp({
     snippetChannels,
     onConfirm,
     onCancel,
-}: SnippetObjectType & Props) {
+}: SnippetObjType & Props) {
     const [selectedChannels, setSelectedChannels] =
-        useState<SnippetObjectChannelsType>(snippetChannels);
+        useState<SnippetObjChannelListType>(snippetChannels);
 
     console.log(selectedChannels);
 
+    // TODO: Card Margin TEMPORALY REMOVED FOR FADERs
     const Cards = [];
     for (let i = 1; i <= 64; i++) {
         Cards.push(
@@ -48,7 +50,20 @@ export default function SnippetInputPopUp({
                         });
                     } else {
                         setSelectedChannels((channels) => {
-                            channels[i] = {};
+                            channels[i] = {
+                                fader: {
+                                    enabled: false,
+                                    value: null,
+                                },
+                                muted: {
+                                    enabled: false,
+                                    value: null,
+                                },
+                                gain: {
+                                    enabled: false,
+                                    value: null,
+                                },
+                            };
                             console.log("SET", channels);
                             return { ...channels };
                         });

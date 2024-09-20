@@ -1,0 +1,402 @@
+#fader {
+    position: relative;
+    width: 7.5rem;
+    height: 100%;
+    max-height: 45rem;
+
+    display: grid;
+    grid-template-rows: 5rem 5rem 0px 1fr 5rem;
+    gap: 1px;
+
+    border-radius: 0.4rem;
+    overflow: hidden;
+
+    &::before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: calc(100% - 5rem);
+        background-image: linear-gradient(180deg, #3b3b3b, #161313);
+    }
+
+    #propertySection {
+        // SHRINKED TO 5rem from 7.5rem
+        position: relative;
+        width: 100%;
+        height: 100%;
+
+        border-bottom: 2px solid black;
+
+        //padding: 1.25rem;
+        padding: 0.75rem;
+
+        //FRAME
+        outline: 2px solid rgb(65, 166, 199);
+        outline-offset: -2px;
+        border-top-left-radius: 0.4rem;
+        border-top-right-radius: 0.4rem;
+
+        user-select: none;
+        -webkit-user-select: none;
+
+        &.disabled {
+            opacity: 0.6;
+            //filter: grayscale(1) brightness(0.8);
+            outline-color: #757575;
+        }
+
+        #propertySelBtn {
+            all: initial;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+
+            width: 1.5rem;
+            height: 1.5rem;
+            background-color: rgba(65, 165, 199, 0.5);
+            z-index: 12;
+
+            border-right: 2px solid rgb(65, 166, 199);
+            border-bottom: 2px solid rgb(65, 166, 199);
+
+            border-bottom-right-radius: 0.5rem;
+
+            padding: 0;
+            margin: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            //color: #babbbb;
+            color: white;
+
+            cursor: pointer;
+        }
+
+        &.disabled #propertySelBtn {
+            background-color: #75757580;
+            border-color: #757575;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        path {
+            //stroke-linecap: round;
+            stroke-width: 15;
+        }
+
+        .grey {
+            stroke: #484848;
+        }
+
+        .red {
+            stroke: white;
+            stroke-dasharray: 248;
+            stroke-dashoffset: calc(247 - 247 * 0.5);
+            /* adjust last number for variance */
+        }
+
+        #gainValue {
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding-top: 0.5rem;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+    }
+
+    #buttonSection {
+        position: relative;
+        width: 100%;
+        height: 100%;
+
+        display: grid;
+        place-items: center;
+
+        //FRAME
+        outline: 2px solid #1ca36c;
+        outline-offset: -2px;
+
+        &.disabled {
+            opacity: 0.6;
+            //filter: grayscale(1) brightness(0.8);
+            outline-color: #757575;
+        }
+
+        #mutePropertySelBtn {
+            all: initial;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+
+            width: 1.5rem;
+            height: 1.5rem;
+            background-color: rgba(28, 163, 109, 0.5);
+            z-index: 12;
+
+            border-right: 2px solid #1ca36c;
+            border-bottom: 2px solid #1ca36c;
+
+            border-bottom-right-radius: 0.5rem;
+
+            padding: 0;
+            margin: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            //color: #babbbb;
+            color: white;
+
+            cursor: pointer;
+        }
+
+        &.disabled #mutePropertySelBtn {
+            background-color: #75757580;
+            border-color: #757575;
+        }
+
+        #onButton {
+            width: 5rem;
+            height: 2.75rem;
+
+            background-image: linear-gradient(180deg, #dfdfdf, #c5c5c5);
+            color: #1c1c1c;
+
+            font-size: 1.2rem;
+            font-weight: 800;
+            outline: none;
+            border: none;
+            border-radius: 0.4rem;
+            //text-transform: uppercase;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+
+            transition: 0.15s filter linear;
+
+            &.muted {
+                background-image: linear-gradient(180deg, #565656, #4f4f4f);
+                color: #d9d9d9;
+
+                @media (hover: hover) {
+                    &:hover {
+                        filter: brightness(1.1);
+                    }
+                }
+            }
+
+            @media (hover: hover) {
+                &:hover {
+                    filter: brightness(0.8);
+                }
+            }
+        }
+    }
+
+    #faderPropertySelBtn {
+        position: relative;
+        overflow: visible;
+
+        > button {
+            all: initial;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+
+            width: 1.5rem;
+            height: 1.5rem;
+            background-color: rgba(142, 91, 209, 0.5);
+            z-index: 12;
+
+            border-right: 2px solid rgb(142, 91, 209);
+            border-bottom: 2px solid rgb(142, 91, 209);
+
+            border-bottom-right-radius: 0.5rem;
+
+            padding: 0;
+            margin: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            //color: #babbbb;
+            color: white;
+
+            cursor: pointer;
+
+            &.disabled {
+                opacity: 0.6;
+                //filter: grayscale(1) brightness(0.8);
+                background-color: #75757580;
+                border-color: #757575;
+            }
+        }
+    }
+
+    #sliderSection {
+        position: relative;
+        width: 100%;
+        height: 100%;
+
+        display: grid;
+        grid-template-rows: 1fr 2rem;
+        gap: 1rem;
+        place-items: center;
+        padding: 0.5rem 0px;
+        padding-top: 1rem;
+
+        outline: 2px solid rgb(142, 91, 209);
+        outline-offset: -2px;
+
+        &.disabled {
+            opacity: 0.6;
+            //filter: grayscale(1) brightness(0.8);
+            outline-color: #757575;
+        }
+
+        #sliderTrack {
+            position: relative;
+            width: 0.75rem;
+            height: 100%;
+            background-image: linear-gradient(180deg, #201e1e, #000000);
+            //margin: 0.25rem;
+            border-radius: 99rem;
+
+            container: track / size;
+
+            --value: 0;
+
+            //FRAME
+            //border: 2px solid rgb(142, 91, 209);
+            //outline: 2px solid rgb(142, 91, 209);
+            outline-offset: -2px;
+
+            #sliderThumb {
+                position: absolute;
+                //left: 2.2rem;
+                top: calc(100% * (1 - var(--value)));
+                left: calc(-1.5rem + 0.375rem);
+                right: 50%;
+                width: 3rem;
+                height: 1.5rem;
+                margin-top: -0.75rem;
+                //oldopacity: 0.5;
+
+                background-image: linear-gradient(180deg, #c8c8c8, #c8c8c800);
+                border: 2px solid #999999;
+                border-radius: 0.25rem;
+
+                display: grid;
+                place-items: center;
+
+                cursor: pointer;
+
+                touch-action: none;
+                user-select: none;
+                -webkit-user-select: none;
+
+                &::after {
+                    content: "";
+                    position: relative;
+                    width: 1.25rem;
+                    height: 2px;
+                    background-color: #4b4a4a;
+                    border-bottom: 1px solid #aeadad;
+                }
+
+                &::before {
+                    content: "";
+                    position: absolute;
+                    width: 150%;
+                    height: 225%;
+                    //background-color: rgba(0, 0, 255, 0.473);
+                }
+            }
+
+            #sliderTrackLabels {
+                position: relative;
+                width: max-content;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: left;
+                //justify-content: space-between;
+
+                color: #aaaaaa;
+                margin-left: 1.5rem;
+
+                font-size: 0.85rem;
+                list-style: none;
+
+                > li {
+                    height: 0px;
+
+                    display: flex;
+                    align-items: center;
+                    gap: 0.25rem;
+
+                    user-select: none;
+                    -webkit-user-select: none;
+
+                    //margin-top: -0.05rem;
+
+                    &::before {
+                        content: "";
+                        position: relative;
+                        height: 1px;
+                        width: 0.5rem;
+                        background-color: #aaaaaa;
+                    }
+
+                    &:nth-of-type(1),
+                    &:nth-of-type(2),
+                    &:nth-of-type(3) {
+                        margin-bottom: calc(100cqh / 4.5);
+                    }
+
+                    &:nth-of-type(4),
+                    &:nth-of-type(5),
+                    &:nth-of-type(6) {
+                        margin-bottom: calc(100cqh / 4.5 / 2);
+                    }
+
+                    > i {
+                        padding-top: 0.2rem;
+                        font-size: 0.8rem;
+                    }
+                }
+            }
+        }
+
+        #sliderValue {
+            color: white;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+    }
+
+    #channelCardSection {
+        position: relative;
+        width: 100%;
+        height: 100%;
+
+        //margin-left: -0.25rem;
+        overflow: hidden;
+
+        &.disabled {
+            opacity: 0.6;
+            //filter: grayscale(1) brightness(0.8);
+        }
+    }
+}

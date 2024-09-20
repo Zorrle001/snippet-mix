@@ -1,0 +1,77 @@
+#snippetPage#snippetPage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    //background-color: #161616;
+    background-color: black;
+
+    //padding: 2.5rem;
+    padding-top: 5rem;
+
+    display: grid;
+    grid-template-rows: calc(100% - 4.5rem) 4.5rem;
+
+    gap: 0px;
+
+    container: snippetPageContainer / inline-size;
+
+    // TAB CoNTAINER
+
+    #bottomNav {
+        position: relative;
+        background-color: #333333;
+
+        padding-left: 0.5rem;
+        padding-bottom: 0.5rem;
+
+        display: flex;
+
+        overflow: hidden;
+
+        width: 100%;
+
+        #flatSnippetCardSection {
+            padding-right: 0.5rem;
+            border-right: 1px solid #666666;
+        }
+
+        #tabSection {
+            display: flex;
+            gap: 0.5rem;
+            height: 4rem;
+            padding-left: 0.5rem;
+
+            width: calc(100% - 18.5rem);
+            overflow: auto;
+
+            padding-right: 0.5rem;
+
+            > div {
+                background-image: linear-gradient(180deg, #525252, #464646);
+                width: 7rem;
+                height: 3rem;
+
+                display: grid;
+                place-items: center;
+                color: white;
+                font-size: 1.1rem;
+                font-weight: 600;
+
+                border-bottom-left-radius: 0.35rem;
+                border-bottom-right-radius: 0.35rem;
+
+                user-select: none;
+                -webkit-user-select: none;
+
+                cursor: pointer;
+
+                flex-shrink: 0;
+
+                &.active {
+                    background-image: linear-gradient(180deg, #f5f5f5, #b1b1b1);
+                    color: black;
+                }
+            }
+        }
+    }
+}

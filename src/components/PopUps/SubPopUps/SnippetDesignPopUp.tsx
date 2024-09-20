@@ -14,10 +14,10 @@ import colorCardStyles from "@/styles/ColorCardStyles.module.scss";
 import labelStyles from "@/styles/LabelStyles.module.scss";
 import popupStyles from "@/styles/PopUpStyles.module.scss";
 import { useState } from "react";
-import { SnippetObjectType } from "../CreateSnippetPopUp";
+import { SnippetObjType } from "../CreateSnippetPopUp";
 
 type Props = {
-    onConfirm: (snippetObject: SnippetObjectType) => void;
+    onConfirm: (snippetObject: SnippetObjType) => void;
 };
 export default function SnippetDesignPopUp({
     snippetID,
@@ -26,7 +26,7 @@ export default function SnippetDesignPopUp({
     snippetColor = COLORS.Yellow,
     snippetChannels,
     onConfirm,
-}: SnippetObjectType & Props) {
+}: SnippetObjType & Props) {
     const [page, setPage] = useState(0);
 
     const [name, setName] = useState(snippetName);

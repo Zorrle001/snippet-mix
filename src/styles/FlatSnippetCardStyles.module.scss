@@ -1,0 +1,138 @@
+#flatSnippedCard {
+    position: relative;
+    //width: 7.5rem;
+    height: 4rem;
+    width: 18rem;
+    background-image: linear-gradient(180deg, #e5e5e5, #cecece);
+    --snippetColor: #e5cf2e;
+
+    user-select: none;
+    -webkit-user-select: none;
+
+    transition: 0.15s filter linear;
+
+    border-bottom-left-radius: 0.75rem;
+    border-bottom-right-radius: 0.75rem;
+
+    overflow: hidden;
+
+    #prevSnippet,
+    #nextSnippet {
+        position: absolute;
+        width: 1.5rem;
+        height: 1.5rem;
+        font-size: 1rem;
+        //height: 100%;
+        //width: fit-content;
+
+        margin-top: 1.125rem;
+
+        display: grid;
+        place-items: center;
+
+        //padding: 0.5rem;
+        color: #333333;
+        //background-color: blue;
+        margin-left: 0.25rem;
+
+        cursor: pointer;
+
+        z-index: 5;
+
+        transition: 0.15s filter linear;
+
+        &.disabled {
+            opacity: 0.3;
+        }
+
+        &:not(.disabled):hover {
+            filter: brightness(0);
+        }
+
+        &#nextSnippet {
+            right: 0px;
+            margin-left: 0rem;
+            margin-right: 0.25rem;
+        }
+    }
+
+    #snippedIcon {
+        position: absolute;
+        top: 0.25rem;
+        right: 3rem;
+        font-size: 2rem;
+        //color: var(--snippedColor);
+        //color: lighten(#e5cf2e, 7%);
+        color: var(--snippetColor);
+        opacity: 60%;
+    }
+
+    &.yellow #snippedIcon {
+        opacity: 75%;
+    }
+
+    #snippedID {
+        position: absolute;
+        top: 0.25rem;
+        left: 3rem;
+        font-size: 0.85rem;
+    }
+
+    #snippedName {
+        position: absolute;
+        bottom: 0.5rem;
+        font-size: 1.2rem;
+        left: 0px;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        text-align: center;
+        font-weight: 600;
+        line-height: 1;
+        min-height: 2lh;
+        max-height: 3lh;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &::after {
+        content: "";
+        position: absolute;
+        left: 0px;
+        bottom: 0px;
+        width: 100%;
+        height: 0.5rem;
+        background-color: var(--snippetColor);
+    }
+
+    &.purple {
+        --snippetColor: #651c8c;
+    }
+
+    &.magenta {
+        --snippetColor: #e7268a;
+    }
+    &.red {
+        --snippetColor: #d92b2b;
+    }
+    &.orange {
+        --snippetColor: #e5742e;
+    }
+    &.yellow {
+        --snippetColor: #e5cf2e;
+    }
+    &.blue {
+        --snippetColor: #1745e2;
+    }
+    &.cyan {
+        --snippetColor: #008ae7;
+    }
+    &.green {
+        --snippetColor: #1ca36c;
+    }
+    &.gray {
+        --snippetColor: #a1a1a5;
+    }
+}

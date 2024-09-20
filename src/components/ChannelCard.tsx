@@ -1,25 +1,41 @@
 import styles from "@/styles/ChannelCardStyles.module.scss";
-import { MouseEventHandler } from "react";
+import { cn } from "@/utils/Utils";
+import { CSSProperties, MouseEventHandler } from "react";
+import { COLORS } from "./ColorCard";
 
 type Props = {
     id: number;
     name: string;
     selected?: boolean;
     onClick: MouseEventHandler<HTMLElement>;
+    icon?: string;
+    iconStyle?: CSSProperties;
+    color?: string[];
+    identifier?: string;
 };
-export default function ChannelCard({ id, name, selected, onClick }: Props) {
+export default function ChannelCard({
+    id,
+    name,
+    selected,
+    onClick,
+    icon = "fa-solid fa-arrow-right-to-bracket",
+    iconStyle,
+    color = COLORS.Cyan,
+    identifier,
+}: Props) {
     return (
         <article
             id={styles.channelCard}
-            className={selected ? styles.selected : ""}
+            className={
+                selected
+                    ? cn(styles.selected, styles[color[1]])
+                    : styles[color[1]]
+            }
             onClick={onClick}
         >
-            <i
-                className="fa-solid fa-arrow-right-to-bracket"
-                id={styles.channelIcon}
-            ></i>
+            <i className={icon} id={styles.channelIcon} style={iconStyle}></i>
 
-            <p id={styles.channelID}>CH {id}</p>
+            <p id={styles.channelID}>{identifier ? identifier : `CH ${id}`}</p>
             <p id={styles.channelName}>{name}</p>
         </article>
     );

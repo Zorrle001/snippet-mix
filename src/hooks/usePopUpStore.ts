@@ -1,4 +1,4 @@
-import { SnippetObjectType } from "@/components/PopUps/CreateSnippetPopUp";
+import { SnippetObjType } from "@/components/PopUps/CreateSnippetPopUp";
 import { create } from "zustand";
 
 export type PopUpStoreType = {
@@ -9,6 +9,7 @@ export type PopUpStoreType = {
 
 export enum PopUps {
     CreatePopUp,
+    DesignPopUp,
 }
 
 export const usePopUpStore = create<PopUpStoreType>((set, get) => ({

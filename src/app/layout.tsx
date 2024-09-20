@@ -11,14 +11,22 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     console.log("LAYOUT");
+
+    //const [scopeStart, scopeEnd] = useScopedCSS(scopedCss);
+
+    const testStart = {
+        "scope-start": "",
+    };
+
     return (
-        <html lang="en">
+        <html lang="en" {...testStart}>
             <head>
                 <link
                     rel="stylesheet"
                     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
                 />
             </head>
+
             <body className={noto_sans.className}>{children}</body>
         </html>
     );
