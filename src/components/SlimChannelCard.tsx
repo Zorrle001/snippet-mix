@@ -3,7 +3,7 @@ import { cn } from "@/utils/Utils";
 import { MouseEventHandler } from "react";
 
 type Props = {
-    id: number;
+    id: string;
     name: string;
     selected?: boolean;
     onClick: MouseEventHandler<HTMLElement>;
@@ -30,7 +30,10 @@ export default function ChannelCard({
                 id={styles.channelIcon}
             ></i>
 
-            <p id={styles.channelID}>CH {id}</p>
+            <p id={styles.channelID}>
+                {/* CH  */}
+                {id}
+            </p>
             <p id={styles.channelName}>{name}</p>
         </article>
     );

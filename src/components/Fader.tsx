@@ -1,16 +1,17 @@
 import { FontClassName } from "@/app/layout";
 import styles from "@/styles/FaderStyles.module.scss";
 import { cn } from "@/utils/Utils";
-import { useRef, useState } from "react";
+import { CSSProperties, useEffect, useRef, useState } from "react";
 import { SnippetObjChannelObjType } from "./PopUps/CreateSnippetPopUp";
 import SlimChannelCard from "./SlimChannelCard";
 
 type Props = {
-    channelID: number;
+    channelID: string;
     channelObj: SnippetObjChannelObjType;
     onChange: (value: number) => void;
     onChannelObjUpdate: () => void;
     sendsActive?: boolean;
+    glowColor?: string;
 };
 
 export default function Fader({
@@ -19,6 +20,7 @@ export default function Fader({
     onChange,
     onChannelObjUpdate,
     sendsActive = false,
+    glowColor = undefined,
 }: Props) {
     /*const [value, setValue] = useState(
         channelObj.fader.value ? channelObj.fader.value : 0
@@ -31,6 +33,13 @@ export default function Fader({
     const sliderValueRef = useRef<HTMLParagraphElement | null>(null);
 
     const [thumbOffset, setThumbOffset] = useState(0);
+
+    useEffect(() => {
+        // TO PREVENT STUCK PERCENTAGE AFTER MANUAL CHANGE AND THEN SERVER RECIEVED CHANGE
+        value = channelObj.fader.value ? channelObj.fader.value : 0;
+        if (!sliderValueRef.current) return;
+        sliderValueRef.current.innerHTML = `${(value * 100).toFixed(2)}%`;
+    }, [channelObj]);
 
     return (
         <article
@@ -134,9 +143,20 @@ export default function Fader({
                 id={styles.sliderSection}
                 className={channelObj.fader.enabled ? "" : styles.disabled}
             >
-                <div id={styles.sliderTrack} ref={trackRef}>
+                <div
+                    id={styles.sliderTrack}
+                    ref={trackRef}
+                    style={
+                        {
+                            "--glowColor": glowColor
+                                ? glowColor
+                                : "transparent",
+                        } as CSSProperties
+                    }
+                >
                     <div
                         id={styles.sliderThumb}
+                        className={moving ? styles.noTransition : ""}
                         onMouseDown={(e) => {
                             if (thumbRef.current) {
                                 const thumbHeight =
@@ -204,7 +224,7 @@ export default function Fader({
             >
                 <SlimChannelCard
                     id={channelID}
-                    name={`CH ${channelID}`}
+                    name={channelID}
                     onClick={() => {}}
                     sendsActive={sendsActive}
                 />

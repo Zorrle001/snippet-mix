@@ -5,14 +5,19 @@ import {
     getMIXOutputChannelEnum,
     getMTXOutputChannelEnum,
     OutputChannelEnum,
+    SnippetObjChannelListType,
+    SnippetObjChannelObjType,
+    SnippetObjOutputChannelObjType,
     SnippetObjType,
 } from "@/components/PopUps/CreateSnippetPopUp";
 import SnippetCard from "@/components/SnippetCard";
 import TabBar from "@/components/UI/TabBar";
 import { useSnippetStore } from "@/hooks/useSnippetStore";
 
-import styles from "@/styles/tabs/ChannelsTabStyles.module.scss";
+import { removeItemAll } from "@/utils/Utils";
 import { useState } from "react";
+
+import styles from "@/styles/tabs/ChannelsTabStyles.module.scss";
 
 type Props = {
     snippets: SnippetObjType[];
@@ -31,18 +36,50 @@ export default function ChannelsTab({ snippets, snippetObj }: Props) {
 
     if (tab === 0) {
         for (let i = 1; i <= 64; i++) {
+            const channelID = `ch${i}`;
             Cards.push(
                 <ChannelCard
-                    id={i}
+                    id={channelID}
                     name={"Channel " + i}
                     key={i}
-                    selected={selectedChannels[i] != undefined}
+                    selected={selectedChannels.includes(channelID)}
                     onClick={() => {
-                        if (selectedChannels[i] != undefined) {
-                            delete selectedChannels[i];
+                        if (selectedChannels.includes(channelID)) {
+                            removeItemAll(selectedChannels, channelID);
+
+                            for (const outputChannels in snippetObj.snippetOutputChannels) {
+                                const channels =
+                                    snippetObj.snippetOutputChannels[
+                                        outputChannels
+                                    ].channels;
+
+                                delete channels[channelID];
+                            }
+
                             setSnippets(() => [...snippets]);
                         } else {
-                            selectedChannels[i] = {
+                            for (const outputChannels in snippetObj.snippetOutputChannels) {
+                                const channels =
+                                    snippetObj.snippetOutputChannels[
+                                        outputChannels
+                                    ].channels;
+
+                                channels[channelID] = {
+                                    fader: {
+                                        enabled: false,
+                                        value: null,
+                                    },
+                                    muted: {
+                                        enabled: false,
+                                        value: null,
+                                    },
+                                    gain: {
+                                        enabled: false,
+                                        value: null,
+                                    },
+                                };
+                            }
+                            /*selectedChannels[i] = {
                                 fader: {
                                     enabled: false,
                                     value: null,
@@ -55,7 +92,8 @@ export default function ChannelsTab({ snippets, snippetObj }: Props) {
                                     enabled: false,
                                     value: null,
                                 },
-                            };
+                            };*/
+                            selectedChannels.push(channelID);
                             setSnippets(() => [...snippets]);
                         }
                     }}
@@ -66,7 +104,7 @@ export default function ChannelsTab({ snippets, snippetObj }: Props) {
         Cards.push(
             <div>
                 <ChannelCard
-                    id={0}
+                    id={"lr"}
                     name="LR"
                     color={COLORS.Red}
                     icon={"fa-solid fa-square-poll-vertical"}
@@ -78,7 +116,7 @@ export default function ChannelsTab({ snippets, snippetObj }: Props) {
                     onClick={() => onOutputChannelClick(OutputChannelEnum.LR)}
                 />
                 <ChannelCard
-                    id={0}
+                    id={"mono"}
                     name="Mono"
                     color={COLORS.Gray}
                     icon={"fa-solid fa-square-poll-vertical"}
@@ -97,7 +135,7 @@ export default function ChannelsTab({ snippets, snippetObj }: Props) {
             const elementMixID = mixID;
             temp.push(
                 <ChannelCard
-                    id={mixID}
+                    id={`mix${mixID}`}
                     name={"MIX " + mixID}
                     color={COLORS.Yellow}
                     icon={"fa-solid fa-sliders"}
@@ -125,7 +163,7 @@ export default function ChannelsTab({ snippets, snippetObj }: Props) {
             const elementMtxID = mtxID;
             temp2.push(
                 <ChannelCard
-                    id={mtxID}
+                    id={`mtx${mtxID}`}
                     name={"MTX " + mtxID}
                     color={COLORS.Orange}
                     icon={"fa-solid fa-gears"}
@@ -153,7 +191,7 @@ export default function ChannelsTab({ snippets, snippetObj }: Props) {
             const elementFxID = fxID;
             temp3.push(
                 <ChannelCard
-                    id={fxID}
+                    id={`fx${fxID}`}
                     name={"FX " + fxID}
                     color={COLORS.Cyan}
                     icon={"fa-solid fa-wand-magic-sparkles"}
@@ -209,6 +247,25 @@ export default function ChannelsTab({ snippets, snippetObj }: Props) {
             delete selectedOutputChannels[outputChannelEnum];
             setSnippets(() => [...snippets]);
         } else {
+            let channels: SnippetObjChannelListType = {};
+
+            for (const selectedChannel of selectedChannels) {
+                channels[selectedChannel] = {
+                    fader: {
+                        enabled: false,
+                        value: null,
+                    },
+                    muted: {
+                        enabled: false,
+                        value: null,
+                    },
+                    gain: {
+                        enabled: false,
+                        value: null,
+                    },
+                } as SnippetObjChannelObjType;
+            }
+
             selectedOutputChannels[outputChannelEnum] = {
                 fader: {
                     enabled: false,
@@ -218,8 +275,9 @@ export default function ChannelsTab({ snippets, snippetObj }: Props) {
                     enabled: false,
                     value: null,
                 },
-                channels: {},
-            };
+                channels: channels,
+            } as SnippetObjOutputChannelObjType;
+
             setSnippets(() => [...snippets]);
         }
     }

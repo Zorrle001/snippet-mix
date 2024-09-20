@@ -14,12 +14,12 @@ export type SnippetObjType = {
     snippetName: string;
     snippetIcon: string;
     snippetColor: string[];
-    snippetChannels: SnippetObjChannelListType;
+    snippetChannels: string[];
     snippetOutputChannels: SnippetObjOutputChannelListType;
 };
 
 export type SnippetObjChannelListType = {
-    [key: number]: SnippetObjChannelObjType;
+    [key: string]: SnippetObjChannelObjType;
 };
 
 export enum OutputChannelEnum {
@@ -205,7 +205,7 @@ export default function CreateSnippetPopUp({}: Props) {
         snippetName: `Snippet ${ID}`,
         snippetIcon: "fa-solid fa-cube",
         snippetColor: COLORS.Yellow,
-        snippetChannels: {},
+        snippetChannels: [],
         snippetOutputChannels: {},
     });
 
@@ -224,11 +224,44 @@ export default function CreateSnippetPopUp({}: Props) {
         <SnippetInputPopUp
             {...snippetObject}
             onConfirm={(snippetChannels) => {
-                setSnippets((snippets) => [
-                    ...snippets,
-                    { ...snippetObject, snippetChannels },
-                ]);
-                setSnippetObject({ ...snippetObject, snippetChannels });
+                const newSnippet = {
+                    ...snippetObject,
+                    snippetChannels,
+                    snippetOutputChannels:
+                        {} as SnippetObjOutputChannelListType,
+                };
+
+                const channels = {} as SnippetObjChannelListType;
+                for (const selectedChannel of snippetChannels) {
+                    channels[selectedChannel] = {
+                        fader: {
+                            enabled: false,
+                            value: null,
+                        },
+                        muted: {
+                            enabled: false,
+                            value: null,
+                        },
+                        gain: {
+                            enabled: false,
+                            value: null,
+                        },
+                    } as SnippetObjChannelObjType;
+                }
+                newSnippet.snippetOutputChannels[OutputChannelEnum.LR] = {
+                    fader: {
+                        enabled: false,
+                        value: 0,
+                    },
+                    muted: {
+                        enabled: false,
+                        value: false,
+                    },
+                    channels: channels,
+                };
+
+                setSnippets((snippets) => [...snippets, newSnippet]);
+                setSnippetObject(newSnippet);
                 setOpenedPopUp(null);
             }}
             onCancel={(snippetChannels) => {

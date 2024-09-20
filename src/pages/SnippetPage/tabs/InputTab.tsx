@@ -7,31 +7,59 @@ import {
     SnippetObjType,
     sortOutputChannelEnumArray,
 } from "@/components/PopUps/CreateSnippetPopUp";
+import { useInputTabStore } from "@/hooks/useInputTabStore";
 import { useSnippetStore } from "@/hooks/useSnippetStore";
 import homeStyles from "@/styles/HomeStyles.module.scss";
 import styles from "@/styles/tabs/InputTabStyles.module.scss";
 import { cn } from "@/utils/Utils";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type Props = {
     snippets: SnippetObjType[];
     snippetObj: SnippetObjType;
 };
 
+let activeOutputChannel = OutputChannelEnum.LR;
+let lastSnippetObj: SnippetObjType | null = null;
 let lastOutputDisplayName = "";
 let lastOutputDisplayColor = getOutputChannelColor(OutputChannelEnum.MIX1);
 
 export default function InputTab({ snippets, snippetObj }: Props) {
     const setSnippets = useSnippetStore((state) => state.setSnippets);
+    const setActiveOutputChannel_GLOBAL = useInputTabStore(
+        (state) => state.setActiveOutputChannel
+    );
 
-    const [activeOutputChannel, setActiveOutputChannel] =
-        useState<OutputChannelEnum>(OutputChannelEnum.LR);
+    //const [activeOutputChannel, setActiveOutputChannel] =
+    //useState<OutputChannelEnum>(OutputChannelEnum.LR);
+    function setActiveOutputChannel(channel: OutputChannelEnum) {
+        activeOutputChannel = channel;
+        toggleRerender((count) => ++count);
+        setActiveOutputChannel_GLOBAL(channel);
+    }
 
-    useEffect(() => {
+    const [rerender, toggleRerender] = useState(0);
+
+    if (snippetObj.snippetOutputChannels[activeOutputChannel] == undefined) {
+        setActiveOutputChannel(
+            sortOutputChannelEnumArray(
+                Object.keys(
+                    snippetObj.snippetOutputChannels
+                ) as OutputChannelEnum[]
+            )[0]
+        );
+    }
+    /*useEffect(() => {
+        //if (lastSnippetID == snippetObj.snippetID) {
+        //return;
+        //}
+        //lastSnippetID = snippetObj.snippetID;
+        let newActiveOutputChannel = OutputChannelEnum.LR;
         if (
             snippetObj.snippetOutputChannels[OutputChannelEnum.LR] != undefined
         ) {
             setActiveOutputChannel(OutputChannelEnum.LR);
+            toggleRerender((count) => ++count);
         } else {
             setActiveOutputChannel(
                 sortOutputChannelEnumArray(
@@ -40,16 +68,44 @@ export default function InputTab({ snippets, snippetObj }: Props) {
                     ) as OutputChannelEnum[]
                 )[0]
             );
+            toggleRerender((count) => ++count);
+            newActiveOutputChannel = sortOutputChannelEnumArray(
+                Object.keys(
+                    snippetObj.snippetOutputChannels
+                ) as OutputChannelEnum[]
+            )[0];
         }
-    }, [snippetObj]);
+        if (
+            newActiveOutputChannel !== activeOutputChannel &&
+            lastSnippetObj != null
+        ) {
+            snippetObj = lastSnippetObj;
+        } else {
+            lastSnippetObj = snippetObj;
+        }
+    }, [snippetObj]);*/
+
+    /*if (snippetObj.snippetOutputChannels[activeOutputChannel] == undefined) {
+        return <p>Loading</p>;
+    }*/
 
     const faders = [];
-    for (const channelID in snippetObj.snippetChannels) {
-        const channelObj = snippetObj.snippetChannels[channelID];
+    for (const channelID of snippetObj.snippetChannels) {
+        const channelObj =
+            snippetObj.snippetOutputChannels[activeOutputChannel].channels[
+                channelID
+            ];
+
+        console.log(
+            channelObj,
+            snippetObj.snippetOutputChannels,
+            activeOutputChannel,
+            channelID
+        );
 
         faders.push(
             <Fader
-                channelID={parseInt(channelID)}
+                channelID={channelID}
                 channelObj={channelObj}
                 onChange={(value) => {
                     channelObj.fader = {
@@ -65,8 +121,13 @@ export default function InputTab({ snippets, snippetObj }: Props) {
                 onChannelObjUpdate={() => {
                     setSnippets(() => [...snippets]);
                 }}
-                key={snippetObj.snippetID + "-" + channelID}
+                key={channelID}
                 sendsActive={activeOutputChannel !== OutputChannelEnum.LR}
+                glowColor={
+                    activeOutputChannel !== OutputChannelEnum.LR
+                        ? getOutputChannelColor(activeOutputChannel)
+                        : undefined
+                }
             />
         );
     }
@@ -161,6 +222,7 @@ export default function InputTab({ snippets, snippetObj }: Props) {
                                 enabled: false,
                                 value: true,
                             },
+                            channels: {},
                         }}
                         onChange={() => {}}
                         onOutputChannelObjUpdate={() => {}}
@@ -173,6 +235,10 @@ export default function InputTab({ snippets, snippetObj }: Props) {
 
 export function InputTabShortcutButtons({ snippets, snippetObj }: Props) {
     const setSnippets = useSnippetStore((state) => state.setSnippets);
+
+    const activeOutputChannel = useInputTabStore(
+        (state) => state.activeOutputChannel
+    );
 
     const [
         allFaderPropertiesEnabled,
@@ -196,14 +262,18 @@ export function InputTabShortcutButtons({ snippets, snippetObj }: Props) {
         return enabledChannels === channelCount ? true : false;
     } */
 
+    // TODO: FIX WITH GLOBAL ACTIVE OUTPUT CHANNEL
     function allPropertiesEnabledCombined() {
         let channelCount = 0;
         let enabledFaderChannels = 0;
         let enabledMuteChannels = 0;
         let enabledGainChannels = 0;
 
-        for (const channelID in snippetObj.snippetChannels) {
-            const channelObj = snippetObj.snippetChannels[channelID];
+        for (const channelID of snippetObj.snippetChannels) {
+            const channelObj =
+                snippetObj.snippetOutputChannels[activeOutputChannel].channels[
+                    channelID
+                ];
 
             channelCount++;
             if (channelObj.fader.enabled == true) {
@@ -237,9 +307,11 @@ export function InputTabShortcutButtons({ snippets, snippetObj }: Props) {
                 id={homeStyles.faderSCBtn}
                 onClick={() => {
                     setSnippets((snippets) => {
-                        for (const channelID in snippetObj.snippetChannels) {
+                        for (const channelID of snippetObj.snippetChannels) {
                             const channelObj =
-                                snippetObj.snippetChannels[channelID];
+                                snippetObj.snippetOutputChannels[
+                                    activeOutputChannel
+                                ].channels[channelID];
 
                             if (!allFaderPropertiesEnabled) {
                                 channelObj.fader.enabled = true;
@@ -262,9 +334,11 @@ export function InputTabShortcutButtons({ snippets, snippetObj }: Props) {
                 id={homeStyles.muteSCBtn}
                 onClick={() => {
                     setSnippets((snippets) => {
-                        for (const channelID in snippetObj.snippetChannels) {
+                        for (const channelID of snippetObj.snippetChannels) {
                             const channelObj =
-                                snippetObj.snippetChannels[channelID];
+                                snippetObj.snippetOutputChannels[
+                                    activeOutputChannel
+                                ].channels[channelID];
 
                             if (!allMutePropertiesEnabled) {
                                 channelObj.muted.enabled = true;
@@ -287,9 +361,11 @@ export function InputTabShortcutButtons({ snippets, snippetObj }: Props) {
                 id={homeStyles.gainSCBtn}
                 onClick={() => {
                     setSnippets((snippets) => {
-                        for (const channelID in snippetObj.snippetChannels) {
+                        for (const channelID of snippetObj.snippetChannels) {
                             const channelObj =
-                                snippetObj.snippetChannels[channelID];
+                                snippetObj.snippetOutputChannels[
+                                    activeOutputChannel
+                                ].channels[channelID];
 
                             if (!allGainPropertiesEnabled) {
                                 channelObj.gain.enabled = true;

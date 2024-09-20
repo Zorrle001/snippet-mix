@@ -276,11 +276,14 @@
             container: track / size;
 
             --value: 0;
+            --glowColor: transparent;
 
             //FRAME
             //border: 2px solid rgb(142, 91, 209);
-            //outline: 2px solid rgb(142, 91, 209);
-            outline-offset: -2px;
+            outline: 2px solid var(--glowColor);
+            outline-offset: -1px;
+
+            transition: outline 0.1s linear;
 
             #sliderThumb {
                 position: absolute;
@@ -305,6 +308,16 @@
                 touch-action: none;
                 user-select: none;
                 -webkit-user-select: none;
+
+                transition: all 0.1s ease-out;
+
+                @starting-style {
+                    top: 100%;
+                }
+
+                &.noTransition {
+                    transition: none;
+                }
 
                 &::after {
                     content: "";

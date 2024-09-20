@@ -7,15 +7,13 @@ import PopUp, {
     PopUpHeader,
 } from "@/components/PopUp";
 import SnippetCard from "@/components/SnippetCard";
+import { removeItemAll } from "@/utils/Utils";
 import { useState } from "react";
-import {
-    SnippetObjChannelListType,
-    SnippetObjType,
-} from "../CreateSnippetPopUp";
+import { SnippetObjType } from "../CreateSnippetPopUp";
 
 type Props = {
-    onConfirm: (snippetChannels: SnippetObjChannelListType) => void;
-    onCancel: (snippetChannels: SnippetObjChannelListType) => void;
+    onConfirm: (snippetChannels: string[]) => void;
+    onCancel: (snippetChannels: string[]) => void;
 };
 
 export default function SnippetInputPopUp({
@@ -28,29 +26,31 @@ export default function SnippetInputPopUp({
     onCancel,
 }: SnippetObjType & Props) {
     const [selectedChannels, setSelectedChannels] =
-        useState<SnippetObjChannelListType>(snippetChannels);
+        useState<string[]>(snippetChannels);
 
     console.log(selectedChannels);
 
     // TODO: Card Margin TEMPORALY REMOVED FOR FADERs
     const Cards = [];
     for (let i = 1; i <= 64; i++) {
+        const channelID = `ch${i}`;
         Cards.push(
             <ChannelCard
-                id={i}
+                id={channelID}
                 name={"Channel " + i}
                 key={i}
-                selected={selectedChannels[i] != undefined}
+                selected={selectedChannels.includes(channelID)}
                 onClick={() => {
-                    if (selectedChannels[i] != undefined) {
+                    if (selectedChannels.includes(channelID)) {
                         setSelectedChannels((channels) => {
-                            delete channels[i];
+                            removeItemAll(selectedChannels, channelID);
+
                             console.log("REMOVE", channels);
-                            return { ...channels };
+                            return [...channels];
                         });
                     } else {
                         setSelectedChannels((channels) => {
-                            channels[i] = {
+                            /*channels[i] = {
                                 fader: {
                                     enabled: false,
                                     value: null,
@@ -63,9 +63,10 @@ export default function SnippetInputPopUp({
                                     enabled: false,
                                     value: null,
                                 },
-                            };
+                            };*/
+                            channels.push(channelID);
                             console.log("SET", channels);
-                            return { ...channels };
+                            return [...channels];
                         });
                     }
                 }}
@@ -81,7 +82,7 @@ export default function SnippetInputPopUp({
                     name={snippetName}
                     icon={snippetIcon}
                     color={snippetColor}
-                    channelCount={Object.keys(selectedChannels).length}
+                    channelCount={selectedChannels.length}
                     faderIndicator={false}
                     gainIndicator={false}
                 ></SnippetCard>

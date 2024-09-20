@@ -4,7 +4,7 @@ import { CSSProperties, MouseEventHandler } from "react";
 import { COLORS } from "./ColorCard";
 
 type Props = {
-    id: number;
+    id: string;
     name: string;
     selected?: boolean;
     onClick: MouseEventHandler<HTMLElement>;
@@ -35,7 +35,7 @@ export default function ChannelCard({
         >
             <i className={icon} id={styles.channelIcon} style={iconStyle}></i>
 
-            <p id={styles.channelID}>{identifier ? identifier : `CH ${id}`}</p>
+            <p id={styles.channelID}>{identifier ? identifier : id}</p>
             <p id={styles.channelName}>{name}</p>
         </article>
     );

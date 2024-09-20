@@ -2,22 +2,12 @@ import { FontClassName } from "@/app/layout";
 import styles from "@/styles/FaderStyles.module.scss";
 import { cn } from "@/utils/Utils";
 import { useRef, useState } from "react";
+import { SnippetObjOutputChannelObjType } from "./PopUps/CreateSnippetPopUp";
 import SlimChannelCard from "./SlimChannelCard";
-
-export type OutputChannelObjType = {
-    fader: {
-        enabled: boolean;
-        value: number | null;
-    };
-    muted: {
-        enabled: boolean;
-        value: boolean | null;
-    };
-};
 
 type Props = {
     outputChannelID: number;
-    outputChannelObj: OutputChannelObjType;
+    outputChannelObj: SnippetObjOutputChannelObjType;
     onChange: (value: number) => void;
     onOutputChannelObjUpdate: () => void;
 };
