@@ -3,11 +3,12 @@
 import { FontClassName } from "@/app/layout";
 import HomeGrid from "@/components/HomeGrid";
 import SnippetCard from "@/components/SnippetCard";
-import { useHomeGridStore } from "@/hooks/useHomeGridStore";
+import { fallbackPage, usePagesStore } from "@/hooks/usePagesStore";
 import { PopUps, usePopUpStore } from "@/hooks/usePopUpStore";
 import { useSnippetPageStore } from "@/hooks/useSnippetPageStore";
 import { useSnippetStore } from "@/hooks/useSnippetStore";
 import styles from "@/styles/HomeStyles.module.scss";
+import { randomBytes } from "crypto";
 
 type Props = {};
 export default function HomePage({}: Props) {
@@ -19,10 +20,31 @@ export default function HomePage({}: Props) {
         (state) => state.setSelectedSnippet
     );
 
-    const collumns = useHomeGridStore((state) => state.collumns);
-    const rows = useHomeGridStore((state) => state.rows);
-    const setCollumns = useHomeGridStore((state) => state.setCollumns);
-    const setRows = useHomeGridStore((state) => state.setRows);
+    const setEditMode = usePagesStore((state) => state.setEditMode);
+    const editMode = usePagesStore((state) => state.editMode);
+
+    //const collumns = usePagesStore((state) => state.legacy_collumns);
+    //const rows = usePagesStore((state) => state.legacy_rows);
+    //const setCollumns = usePagesStore((state) => state.set_legacy_Collumns);
+    //const setRows = usePagesStore((state) => state.set_legacy_Rows);
+
+    const pages = usePagesStore((state) => state.pages);
+    const setPages = usePagesStore((state) => state.setPages);
+    const activePage = usePagesStore((state) => state.activePage);
+    const setActivePage = usePagesStore((state) => state.setActivePage);
+
+    if (pages.length == 0) {
+        return <h1 style={{ color: "white" }}>Loading Server Side Pages</h1>;
+    }
+
+    const pageObj = pages[activePage];
+
+    let index = 0;
+    const optionElements = pages.map((pageObj) => {
+        return <option value={index++}>{pageObj.name}</option>;
+    });
+
+    optionElements.push(<option value={-1}>+ New Page</option>);
 
     const snippetCards = snippets.map((snippetObj) => (
         <SnippetCard
@@ -35,7 +57,7 @@ export default function HomePage({}: Props) {
             faderIndicator={false}
             gainIndicator={false}
             onClick={() => {
-                setSelectedSnippet(snippetObj.snippetID);
+                if (!editMode) setSelectedSnippet(snippetObj.snippetID);
             }}
         ></SnippetCard>
     ));
@@ -58,6 +80,35 @@ export default function HomePage({}: Props) {
                         Online
                     </button>
                 </section>
+                <section id={styles.shortcutBtns}>
+                    <button
+                        id={styles.deleteBtn}
+                        onClick={() => {
+                            pageObj.name = String(randomBytes(4));
+                            setPages(() => [...pages]);
+                        }}
+                    >
+                        <i className="fa-solid fa-i-cursor"></i>
+                    </button>
+                    <button
+                        id={editMode ? undefined : styles.deleteBtn}
+                        onClick={() => {
+                            setEditMode((state) => !state);
+                        }}
+                    >
+                        <i className="fa-solid fa-pencil"></i>
+                    </button>
+                    <button
+                        id={styles.deleteBtn}
+                        onClick={() => {
+                            setPages((pages) => {
+                                return pages.toSpliced(activePage, 1);
+                            });
+                        }}
+                    >
+                        <i className="fa-solid fa-trash"></i>
+                    </button>
+                </section>
                 <section id={styles.pages}>
                     {/* <button id={styles.lockGrid}>
                         <i className="fa-solid fa-lock"></i>
@@ -74,7 +125,7 @@ export default function HomePage({}: Props) {
                             setCollumns(Number(e.target.value));
                         }}
                     /> */}
-                    <p>{collumns}</p>
+                    <p>{pageObj.collumns}</p>
                     <span>
                         <i className="fa-solid fa-xmark"></i>
                     </span>
@@ -87,16 +138,32 @@ export default function HomePage({}: Props) {
                             setRows(Number(e.target.value));
                         }}
                     /> */}
-                    <p>{rows}</p>
-                    <select>
-                        <option>Kleine Besetzung</option>
-                        <option>Große Besetzung</option>
-                        <option>+ New Page</option>
+                    <p>{pageObj.rows}</p>
+                    <select
+                        value={activePage}
+                        onChange={(e) => {
+                            const value = parseInt(e.currentTarget.value);
+                            if (value == -1) {
+                                const newPage = { ...fallbackPage };
+                                newPage.name = "Page " + (pages.length + 1);
+                                setPages(() => [...pages, newPage]);
+                                setActivePage(pages.length);
+                                return;
+                            }
+                            setActivePage(value);
+                        }}
+                    >
+                        {optionElements}
                     </select>
                 </section>
             </nav>
             {/* {snippetCards} */}
-            <HomeGrid snippetCards={snippetCards} />
+            <HomeGrid
+                snippetCards={snippetCards}
+                pages={pages}
+                activePage={activePage}
+                editMode={editMode}
+            />
             <button
                 onClick={() => {
                     setOpenedPopUp(PopUps.CreatePopUp);

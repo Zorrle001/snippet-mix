@@ -12,7 +12,7 @@ import { useSnippetStore } from "@/hooks/useSnippetStore";
 import homeStyles from "@/styles/HomeStyles.module.scss";
 import styles from "@/styles/tabs/InputTabStyles.module.scss";
 import { cn } from "@/utils/Utils";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 type Props = {
     snippets: SnippetObjType[];
@@ -20,25 +20,36 @@ type Props = {
 };
 
 let activeOutputChannel = OutputChannelEnum.LR;
-let lastSnippetObj: SnippetObjType | null = null;
+let lastActiveOutputChannel: OutputChannelEnum | null = null;
 let lastOutputDisplayName = "";
 let lastOutputDisplayColor = getOutputChannelColor(OutputChannelEnum.MIX1);
+
+let llaoc: null | OutputChannelEnum = null;
 
 export default function InputTab({ snippets, snippetObj }: Props) {
     const setSnippets = useSnippetStore((state) => state.setSnippets);
     const setActiveOutputChannel_GLOBAL = useInputTabStore(
         (state) => state.setActiveOutputChannel
     );
+    const setLastActiveOutputChannel_GLOBAL = useInputTabStore(
+        (state) => state.setLastActiveOutputChannel
+    );
 
     //const [activeOutputChannel, setActiveOutputChannel] =
     //useState<OutputChannelEnum>(OutputChannelEnum.LR);
     function setActiveOutputChannel(channel: OutputChannelEnum) {
+        lastActiveOutputChannel = activeOutputChannel;
         activeOutputChannel = channel;
         toggleRerender((count) => ++count);
         setActiveOutputChannel_GLOBAL(channel);
     }
 
+    /*useEffect(() => {
+        setActiveOutputChannel_GLOBAL(activeOutputChannel);
+    }, [snippetObj]);*/
+
     const [rerender, toggleRerender] = useState(0);
+    const [startingStyles, reloadStartingStyles] = useState(0);
 
     if (snippetObj.snippetOutputChannels[activeOutputChannel] == undefined) {
         setActiveOutputChannel(
@@ -89,6 +100,13 @@ export default function InputTab({ snippets, snippetObj }: Props) {
         return <p>Loading</p>;
     }*/
 
+    const [aoc, laoc] = useMemo(() => {
+        const res = [activeOutputChannel, llaoc];
+        llaoc = activeOutputChannel;
+        console.log(res);
+        return res;
+    }, [snippetObj, startingStyles]);
+
     const faders = [];
     for (const channelID of snippetObj.snippetChannels) {
         const channelObj =
@@ -96,18 +114,18 @@ export default function InputTab({ snippets, snippetObj }: Props) {
                 channelID
             ];
 
-        console.log(
+        /*console.log(
             channelObj,
             snippetObj.snippetOutputChannels,
             activeOutputChannel,
             channelID
-        );
+        );*/
 
         faders.push(
             <Fader
                 channelID={channelID}
                 channelObj={channelObj}
-                onChange={(value) => {
+                onChange={(value: number) => {
                     channelObj.fader = {
                         enabled: channelObj.fader.enabled,
                         value,
@@ -127,6 +145,17 @@ export default function InputTab({ snippets, snippetObj }: Props) {
                     activeOutputChannel !== OutputChannelEnum.LR
                         ? getOutputChannelColor(activeOutputChannel)
                         : undefined
+                }
+                // STARTS SMALL
+                sendsActiveStartingStyle={
+                    // ACTIVE IS LR & LAST WAS NOT LR
+                    /*(aoc == OutputChannelEnum.LR &&
+                        laoc != OutputChannelEnum.LR &&
+                        laoc !== null) ||
+                    (aoc !== OutputChannelEnum.LR &&
+                        laoc !== OutputChannelEnum.LR &&
+                        laoc !== null)*/
+                    laoc !== OutputChannelEnum.LR && laoc !== null
                 }
             />
         );
@@ -160,7 +189,10 @@ export default function InputTab({ snippets, snippetObj }: Props) {
                               }
                             : undefined
                     }
-                    onClick={() => setActiveOutputChannel(outputChannelEnum)}
+                    onClick={() => {
+                        setActiveOutputChannel(outputChannelEnum);
+                        reloadStartingStyles((count) => ++count);
+                    }}
                 >
                     {getOutputChannelDisplayName(outputChannelEnum)}
                 </li>
@@ -181,6 +213,12 @@ export default function InputTab({ snippets, snippetObj }: Props) {
         lastOutputDisplayName = outputDisplayName;
         lastOutputDisplayColor = outputDisplayColor;
     }
+
+    /*if (save == true) {
+        lastActiveOutputChannel = activeOutputChannel;
+    }*/
+
+    //lastActiveOutputChannel = activeOutputChannel;
 
     return (
         <>
@@ -212,20 +250,36 @@ export default function InputTab({ snippets, snippetObj }: Props) {
                 <section id={styles.masterFaderContainer}>
                     <ul id={styles.outputChannelList}>{outputChannelItems}</ul>
                     <OutputFader
-                        outputChannelID={1}
-                        outputChannelObj={{
-                            fader: {
-                                enabled: false,
-                                value: 0,
-                            },
-                            muted: {
-                                enabled: false,
-                                value: true,
-                            },
-                            channels: {},
+                        outputChannelEnum={activeOutputChannel}
+                        outputChannelObj={
+                            snippetObj.snippetOutputChannels[
+                                activeOutputChannel
+                            ]
+                        }
+                        onChange={(value: number) => {
+                            const outputChannelObj =
+                                snippetObj.snippetOutputChannels[
+                                    activeOutputChannel
+                                ];
+                            outputChannelObj.fader = {
+                                enabled: outputChannelObj.fader.enabled,
+                                value,
+                            };
+                            console.log(outputChannelObj);
+                            // TODO: UNSAFE - doesnt use prev state
+                            //setSnippets(() => snippets);
+                            setSnippets(() => [...snippets]);
+                            console.log([...snippets]);
+                            //unsubscribedSnippets = [...snippets];
                         }}
-                        onChange={() => {}}
-                        onOutputChannelObjUpdate={() => {}}
+                        onOutputChannelObjUpdate={() => {
+                            setSnippets(() => [...snippets]);
+                        }}
+                        glowColor={
+                            activeOutputChannel !== OutputChannelEnum.LR
+                                ? getOutputChannelColor(activeOutputChannel)
+                                : undefined
+                        }
                     />
                 </section>
             </article>
@@ -239,6 +293,10 @@ export function InputTabShortcutButtons({ snippets, snippetObj }: Props) {
     const activeOutputChannel = useInputTabStore(
         (state) => state.activeOutputChannel
     );
+
+    if (snippetObj.snippetOutputChannels[activeOutputChannel] == undefined) {
+        return;
+    }
 
     const [
         allFaderPropertiesEnabled,

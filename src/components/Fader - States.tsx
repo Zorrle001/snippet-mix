@@ -1,40 +1,45 @@
 import { FontClassName } from "@/app/layout";
 import styles from "@/styles/FaderStyles.module.scss";
 import { cn } from "@/utils/Utils";
-import { CSSProperties, useRef, useState } from "react";
-import {
-    getOutputChannelColor,
-    getOutputChannelDisplayName,
-    getOutputChannelIcon,
-    getOutputChannelIconStyles,
-    OutputChannelEnum,
-    SnippetObjOutputChannelObjType,
-} from "./PopUps/CreateSnippetPopUp";
+import { CSSProperties, useMemo, useRef, useState } from "react";
+import { SnippetObjChannelObjType } from "./PopUps/CreateSnippetPopUp";
 import SlimChannelCard from "./SlimChannelCard";
 
 type Props = {
-    outputChannelEnum: OutputChannelEnum;
-    outputChannelObj: SnippetObjOutputChannelObjType;
+    channelID: string;
+    channelObj: SnippetObjChannelObjType;
     onChange: (value: number) => void;
-    onOutputChannelObjUpdate: () => void;
+    onChannelObjUpdate: () => void;
     sendsActive?: boolean;
     glowColor?: string;
+    sendsActiveStartingStyle?: boolean;
 };
 
-let lastTime = new Date().getTime();
-
-export default function OutputFader({
-    outputChannelEnum,
-    outputChannelObj,
+export default function Fader({
+    channelID,
+    channelObj,
     onChange,
-    onOutputChannelObjUpdate,
+    onChannelObjUpdate,
     sendsActive = false,
     glowColor = undefined,
+    sendsActiveStartingStyle,
 }: Props) {
     /*const [value, setValue] = useState(
         channelObj.fader.value ? channelObj.fader.value : 0
     );*/
-    let value = outputChannelObj.fader.value ? outputChannelObj.fader.value : 0;
+    //let value = channelObj.fader.value ? channelObj.fader.value : 0;
+
+    const [v, setValue] = useState(
+        channelObj.fader.value ? channelObj.fader.value : 0
+    );
+    const value = useMemo(() => {
+        console.log("RERENDERT FADER VALUE MEMO");
+        //const newVal = channelObj.fader.value ? channelObj.fader.value : 0;
+        const newVal = v;
+        setValue(newVal);
+        return newVal;
+    }, [channelObj, v]);
+
     const [moving, setMoving] = useState(false);
 
     const trackRef = useRef<HTMLDivElement | null>(null);
@@ -42,6 +47,14 @@ export default function OutputFader({
     const sliderValueRef = useRef<HTMLParagraphElement | null>(null);
 
     const [thumbOffset, setThumbOffset] = useState(0);
+
+    /*useEffect(() => {
+        // TO PREVENT STUCK PERCENTAGE AFTER MANUAL CHANGE AND THEN SERVER RECIEVED CHANGE
+        //value = channelObj.fader.value ? channelObj.fader.value : 0;
+        setValue(channelObj.fader.value ? channelObj.fader.value : 0);
+        if (!sliderValueRef.current) return;
+        //sliderValueRef.current.innerText = `${(value * 100).toFixed(2)}%`;
+    }, [channelObj]);*/
 
     return (
         <article
@@ -57,37 +70,56 @@ export default function OutputFader({
         >
             <section
                 id={styles.propertySection}
-                className={false ? "" : styles.disabled}
+                className={channelObj.gain.enabled ? "" : styles.disabled}
             >
-                {/* <button
+                <button
                     id={styles.propertySelBtn}
                     onClick={() => {
-                        //false = !false;
-                        onOutputChannelObjUpdate();
+                        channelObj.gain.enabled = !channelObj.gain.enabled;
+                        onChannelObjUpdate();
                     }}
                 >
-                    {false ? (
+                    {channelObj.gain.enabled ? (
                         <i className="fa-regular fa-circle-check"></i>
                     ) : (
                         <i className="fa-regular fa-circle"></i>
                     )}
-                </button> */}
+                </button>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    x="0px"
+                    y="0px"
+                    viewBox="37 -5 120 100"
+                    width="120"
+                    height="100"
+                >
+                    <path
+                        className={styles.grey}
+                        d="M55,90
+               A55,55 0 1,1 140,90"
+                        style={{ fill: "none" }}
+                    />
+                    <path
+                        className={styles.red}
+                        d="M55,90
+               A55,55 0 1,1 140,90"
+                        style={{ fill: "none" }}
+                    />
+                </svg>
+                <p id={styles.gainValue}>+28</p>
             </section>
             <section
                 id={styles.buttonSection}
-                className={
-                    outputChannelObj.muted.enabled ? "" : styles.disabled
-                }
+                className={channelObj.muted.enabled ? "" : styles.disabled}
             >
                 <button
                     id={styles.mutePropertySelBtn}
                     onClick={() => {
-                        outputChannelObj.muted.enabled =
-                            !outputChannelObj.muted.enabled;
-                        onOutputChannelObjUpdate();
+                        channelObj.muted.enabled = !channelObj.muted.enabled;
+                        onChannelObjUpdate();
                     }}
                 >
-                    {outputChannelObj.muted.enabled ? (
+                    {channelObj.muted.enabled ? (
                         <i className="fa-regular fa-circle-check"></i>
                     ) : (
                         <i className="fa-regular fa-circle"></i>
@@ -97,12 +129,11 @@ export default function OutputFader({
                     id={styles.onButton}
                     className={cn(
                         FontClassName,
-                        outputChannelObj.muted.value != true ? styles.muted : ""
+                        channelObj.muted.value != true ? styles.muted : ""
                     )}
                     onClick={() => {
-                        outputChannelObj.muted.value =
-                            !outputChannelObj.muted.value;
-                        onOutputChannelObjUpdate();
+                        channelObj.muted.value = !channelObj.muted.value;
+                        onChannelObjUpdate();
                     }}
                 >
                     ON
@@ -110,16 +141,13 @@ export default function OutputFader({
             </section>
             <div id={styles.faderPropertySelBtn}>
                 <button
-                    className={
-                        outputChannelObj.fader.enabled ? "" : styles.disabled
-                    }
+                    className={channelObj.fader.enabled ? "" : styles.disabled}
                     onClick={() => {
-                        outputChannelObj.fader.enabled =
-                            !outputChannelObj.fader.enabled;
-                        onOutputChannelObjUpdate();
+                        channelObj.fader.enabled = !channelObj.fader.enabled;
+                        onChannelObjUpdate();
                     }}
                 >
-                    {outputChannelObj.fader.enabled ? (
+                    {channelObj.fader.enabled ? (
                         <i className="fa-regular fa-circle-check"></i>
                     ) : (
                         <i className="fa-regular fa-circle"></i>
@@ -128,9 +156,7 @@ export default function OutputFader({
             </div>
             <section
                 id={styles.sliderSection}
-                className={
-                    outputChannelObj.fader.enabled ? "" : styles.disabled
-                }
+                className={channelObj.fader.enabled ? "" : styles.disabled}
             >
                 <div
                     id={styles.sliderTrack}
@@ -155,11 +181,6 @@ export default function OutputFader({
                                     thumbRef.current.getBoundingClientRect().y -
                                     thumbHeight / 2;
                                 setThumbOffset(thumbOffset);
-                                console.log(
-                                    "SET OFFSET",
-                                    thumbOffset,
-                                    thumbHeight
-                                );
                             }
                             setMoving(true);
                         }}
@@ -172,17 +193,11 @@ export default function OutputFader({
                                     thumbRef.current.getBoundingClientRect().y -
                                     thumbHeight / 2;
                                 setThumbOffset(thumbOffset);
-                                console.log(
-                                    "SET OFFSET",
-                                    thumbOffset,
-                                    thumbHeight
-                                );
                             }
                             setMoving(true);
                         }}
                         onTouchMove={move}
                         onTouchEnd={(e) => {
-                            console.log(e);
                             if (moving && trackRef.current) {
                                 move(e);
                                 setMoving(false);
@@ -215,20 +230,19 @@ export default function OutputFader({
             <section
                 id={styles.channelCardSection}
                 className={
-                    !outputChannelObj.muted.enabled &&
-                    !false &&
-                    !outputChannelObj.fader.enabled
+                    !channelObj.muted.enabled &&
+                    !channelObj.gain.enabled &&
+                    !channelObj.fader.enabled
                         ? styles.disabled
                         : ""
                 }
             >
                 <SlimChannelCard
-                    id={outputChannelEnum}
-                    name={getOutputChannelDisplayName(outputChannelEnum)}
+                    id={channelID}
+                    name={channelID}
                     onClick={() => {}}
-                    color={getOutputChannelColor(outputChannelEnum)}
-                    icon={getOutputChannelIcon(outputChannelEnum)}
-                    iconStyle={getOutputChannelIconStyles(outputChannelEnum)}
+                    sendsActive={sendsActive}
+                    sendsActiveStartingStyle={sendsActiveStartingStyle}
                 />
             </section>
         </article>
@@ -255,12 +269,18 @@ export default function OutputFader({
 
             //console.log(y, offsetTop, height, dY, percentage);
 
-            //setValue(percentage);
-            value = percentage;
-            thumbRef.current.style.setProperty("--value", `${percentage}`);
-            sliderValueRef.current.innerText = `${(percentage * 100).toFixed(
+            setValue(percentage);
+            //value = percentage;
+            //thumbRef.current.style.setProperty("--value", `${percentage}`);
+            /*sliderValueRef.current.innerText = `${(percentage * 100).toFixed(
                 2
-            )}%`;
+            )}%`;*/
+
+            console.log("SET NEW VALUE");
+            /*sliderValueRef.current.dataset.value = (percentage * 100).toFixed(
+                2
+            );*/
+
             /* sliderValueRef.current.style.setProperty(
                 "background",
                 `rgb(${percentage * 250}, 0, 0)`

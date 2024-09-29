@@ -2,7 +2,7 @@
 
 import { usePopUpStore } from "@/hooks/usePopUpStore";
 import { useSnippetStore } from "@/hooks/useSnippetStore";
-import { useState } from "react";
+import { CSSProperties, useState } from "react";
 import { COLORS } from "../ColorCard";
 import SnippetDesignPopUp from "./SubPopUps/SnippetDesignPopUp";
 import SnippetInputPopUp from "./SubPopUps/SnippetInputPopUp";
@@ -84,6 +84,35 @@ export function getOutputChannelType(channel: OutputChannelEnum) {
     } else if (channel.includes("fx")) {
         return OutputChannelTypeEnum.FX;
     }
+}
+
+export function getOutputChannelIcon(channel: OutputChannelEnum) {
+    const type = getOutputChannelType(channel);
+    if (type == OutputChannelTypeEnum.LR) {
+        return "fa-solid fa-square-poll-vertical";
+    } else if (type == OutputChannelTypeEnum.MONO) {
+        return "fa-solid fa-square-poll-vertical";
+    } else if (type == OutputChannelTypeEnum.MIX) {
+        return "fa-solid fa-sliders";
+    } else if (type == OutputChannelTypeEnum.MTX) {
+        return "fa-solid fa-gears";
+    } else if (type == OutputChannelTypeEnum.FX) {
+        return "fa-solid fa-wand-magic-sparkles";
+    } else return "fa-solid fa-square-poll-vertical";
+}
+
+export function getOutputChannelIconStyles(
+    channel: OutputChannelEnum
+): CSSProperties {
+    const type = getOutputChannelType(channel);
+    if (type == OutputChannelTypeEnum.MIX) {
+        return { fontSize: "1.85rem" };
+    } else if (
+        type == OutputChannelTypeEnum.MTX ||
+        type == OutputChannelTypeEnum.FX
+    ) {
+        return { fontSize: "1.75rem" };
+    } else return {};
 }
 
 export function getOutputChannelDisplayName(enumString: string): string {

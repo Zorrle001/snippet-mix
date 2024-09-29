@@ -1,6 +1,8 @@
 "use client";
 
+import { SnippetObjType } from "@/components/PopUps/CreateSnippetPopUp";
 import { useNodeConnectionManagerStore } from "@/hooks/useNodeConnectionManagerStore";
+import { PageObjType, usePagesStore } from "@/hooks/usePagesStore";
 import { useSnippetStore } from "@/hooks/useSnippetStore";
 import { useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket";
@@ -20,15 +22,15 @@ export default function Node({}) {
     const setLoading = useNodeConnectionManagerStore(
         (state) => state.setLoading
     );
-    const isLoading = useNodeConnectionManagerStore((state) => state.isLoading);
-    const isConnected = useNodeConnectionManagerStore(
-        (state) => state.isConnected
-    );
 
     const snippets = useSnippetStore((state) => state.snippets);
     const setSnippets = useSnippetStore((state) => state.setSnippets);
 
-    const [nodeSnippets, setNodeSnippets] = useState<any>([]);
+    const pages = usePagesStore((state) => state.pages);
+    const setPages = usePagesStore((state) => state.setPages);
+
+    const [nodeSnippets, setNodeSnippets] = useState<SnippetObjType[]>([]);
+    const [nodePages, setNodePages] = useState<PageObjType[]>([]);
 
     const {
         sendMessage,
@@ -74,10 +76,16 @@ export default function Node({}) {
 
             setNodeSnippets(data.snippets);
             setSnippets(() => structuredClone(data.snippets));
+            setNodePages(data.pages);
+            setPages(() => structuredClone(data.pages));
         } else if (id === "SnippetsUpdate") {
             //setServerSnippets(data);
             setNodeSnippets(data);
             setSnippets(() => structuredClone(data));
+        } else if (id === "PagesUpdate") {
+            //setServerSnippets(data);
+            setNodePages(data);
+            setPages(() => structuredClone(data));
         } else {
             console.error("MessageID is invalid");
         }
@@ -89,13 +97,8 @@ export default function Node({}) {
     }, [nodeSnippets]);
 
     useEffect(() => {
-        console.log(
-            snippets == nodeSnippets,
-            JSON.stringify(snippets).includes("Orange"),
-            JSON.stringify(nodeSnippets).includes("Orange")
-        );
         if (objectsEqual(snippets, nodeSnippets)) {
-            console.log("%cPrevented loop", "color: red");
+            console.log("%cPrevented SNIPPETS loop", "color: red");
             return;
         }
 
@@ -110,6 +113,26 @@ export default function Node({}) {
 
         console.log("Snippets Update");
     }, [snippets]);
+
+    useEffect(() => {
+        console.log("%cSERVER PAGES UPDATE", "color: green", nodePages);
+    }, [nodePages]);
+
+    useEffect(() => {
+        if (objectsEqual(pages, nodePages)) {
+            console.log("%cPrevented PAGES loop", "color: red");
+            return;
+        }
+
+        sendJsonMessage({
+            id: "PagesUpdate",
+            data: pages,
+        });
+
+        setNodePages(structuredClone(pages));
+
+        console.log("Pages Update");
+    }, [pages]);
 
     /*useSnippetStore.subscribe(
         (state) => state.snippets,

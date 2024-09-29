@@ -1,6 +1,6 @@
 import styles from "@/styles/SlimChannelCardStyles.module.scss";
 import { cn } from "@/utils/Utils";
-import { MouseEventHandler } from "react";
+import { CSSProperties, MouseEventHandler } from "react";
 
 type Props = {
     id: string;
@@ -8,6 +8,10 @@ type Props = {
     selected?: boolean;
     onClick: MouseEventHandler<HTMLElement>;
     sendsActive?: boolean;
+    color?: string;
+    sendsActiveStartingStyle?: boolean;
+    icon?: string;
+    iconStyle?: CSSProperties;
 };
 export default function ChannelCard({
     id,
@@ -15,19 +19,39 @@ export default function ChannelCard({
     selected,
     onClick,
     sendsActive = false,
+    color = undefined,
+    sendsActiveStartingStyle: lastSendsActive = false,
+    icon = undefined,
+    iconStyle = undefined,
 }: Props) {
     return (
         <article
             id={styles.slimChannelCard}
             className={cn(
                 selected ? styles.selected : "",
-                sendsActive ? styles.sendsActive : ""
+                sendsActive == true
+                    ? styles.sendsActive
+                    : styles.sendsNotActive,
+                lastSendsActive == true
+                    ? styles.lastSendsActive
+                    : styles.lastSendsNotActive
+                /* lastSendsActive == true
+                    ? styles.sendsActiveStartingStyle
+                    : styles.sendsInactiveStartingStyle */
             )}
             onClick={onClick}
+            style={
+                color
+                    ? ({
+                          "--channelColor": color,
+                      } as CSSProperties)
+                    : undefined
+            }
         >
             <i
-                className="fa-solid fa-arrow-right-to-bracket"
+                className={icon ? icon : "fa-solid fa-arrow-right-to-bracket"}
                 id={styles.channelIcon}
+                style={iconStyle}
             ></i>
 
             <p id={styles.channelID}>

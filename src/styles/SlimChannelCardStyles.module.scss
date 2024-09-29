@@ -1,117 +1,332 @@
-/*@property --channelColor {
+@property --channelColor {
     syntax: "<color>";
     inherits: true;
     initial-value: #2e9ce5;
-}*/
+}
 
 #slimChannelCard {
-    position: relative;
-    width: 7.5rem;
-    height: 5rem;
-    background-image: linear-gradient(180deg, #e5e5e5, #cecece);
-    //--channelColor: #2e9ce5;
+    @mixin defaultStyle() {
+        position: relative;
+        width: 7.5rem;
+        height: 5rem;
+        background-image: linear-gradient(180deg, #e5e5e5, #cecece);
+        --channelColor: #2e9ce5;
 
-    cursor: pointer;
-    user-select: none;
-    -webkit-user-select: none;
+        cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
 
-    //transition: 0.15s filter linear;
+        //transition: 0.15s filter linear;
 
-    // TODO: TEMPORALY REMOVED FOR FADERs
-    //margin-inline: 0.25rem;
+        // TODO: TEMPORALY REMOVED FOR FADERs
+        //margin-inline: 0.25rem;
 
-    outline-offset: -3px;
-    outline: 3px solid transparent;
+        //outline-offset: -3px;
+        //outline: 3px solid transparent;
 
-    //-webkit-tap-highlight-color: transparent;
+        //-webkit-tap-highlight-color: transparent;
 
-    @media (hover: hover) {
-        &:hover {
-            filter: brightness(0.85);
+        @media (hover: hover) {
+            &:hover {
+                filter: brightness(0.85);
+            }
+        }
+
+        &,
+        > *,
+        &::after,
+        &::before {
+            transition: 0.25s ease-out;
+            // no top & bottom transition because of jumping in safari
+            // -> changed to margins
+            transition-property: height, margin, scale, margin-top,
+                margin-bottom;
+            //will-change: height, margin, scale, margin-top, margin-bottom;
+        }
+
+        /*&:active {
+        filter: contrast(2);
+    }*/
+        //}
+
+        #channelIcon {
+            position: absolute;
+            top: 0.35rem;
+            right: 0.5rem;
+            font-size: 2rem;
+            //color: var(--channelColor);
+            //color: lighten(#e5cf2e, 7%);
+            color: var(--channelColor);
+            opacity: 75%;
+
+            //margin-top: 0px;
+        }
+
+        #channelID {
+            position: absolute;
+            top: 0.35rem;
+            left: 0.5rem;
+            font-size: 0.85rem;
+
+            //margin-top: 0px;
+        }
+
+        #channelName {
+            position: absolute;
+            bottom: 0.5rem;
+            font-size: 1.2rem;
+            left: 0px;
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            text-align: center;
+            font-weight: 600;
+            line-height: 1;
+            min-height: 2lh;
+            max-height: 3lh;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            //margin-bottom: 0px;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            left: 0px;
+            bottom: 0px;
+            width: 100%;
+            height: 0.5rem;
+            background-color: var(--channelColor);
+        }
+
+        &.selected {
+            //outline: 2px solid white;
+            //outline-offset: 0.25rem;
+            outline-offset: -3px;
+            outline: 3px solid #1ca36c;
+            --channelColor: #1ca36c;
         }
     }
 
-    &,
-    > * {
-        transition: 0.25s ease-out;
-        transition-property: all;
-    }
+    @include defaultStyle();
 
-    /*&:active {
-        filter: contrast(2);
-    }*/
-    //}
-
-    #channelIcon {
-        position: absolute;
-        top: 0.35rem;
-        right: 0.5rem;
-        font-size: 2rem;
-        //color: var(--channelColor);
-        //color: lighten(#e5cf2e, 7%);
-        color: var(--channelColor);
-        opacity: 75%;
-    }
-
-    #channelID {
-        position: absolute;
-        top: 0.35rem;
-        left: 0.5rem;
-        font-size: 0.85rem;
-    }
-
-    #channelName {
-        position: absolute;
-        bottom: 0.5rem;
-        font-size: 1.2rem;
-        left: 0px;
-        width: 100%;
-        max-width: 100%;
-        height: auto;
-        text-align: center;
-        font-weight: 600;
-        line-height: 1;
-        min-height: 2lh;
-        max-height: 3lh;
-        display: grid;
-        place-items: center;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    &::after {
-        content: "";
-        position: absolute;
-        left: 0px;
-        bottom: 0px;
-        width: 100%;
-        height: 0.5rem;
-        background-color: var(--channelColor);
-    }
-
-    &.selected {
-        //outline: 2px solid white;
-        //outline-offset: 0.25rem;
-        outline-offset: -3px;
-        outline: 3px solid #1ca36c;
-        --channelColor: #1ca36c;
-    }
-
-    &.sendsActive {
+    @mixin sendsActiveMixin() {
         margin-top: 1rem;
         height: 4rem;
 
         #channelName {
-            bottom: 0.25rem;
+            //bottom: 0.25rem;
+            // from .5
+            bottom: 0.5rem;
+            //inset: unset unset unset 0.25rem;
+            margin-bottom: -0.25rem;
+            //margin-top: 0.25rem;
         }
 
         #channelIcon {
             scale: 0.8;
-            top: 0.15rem;
+            //top: 0.15rem;
+            // from .35rem
+            bottom: 0.35rem;
+            //inset: unset unset 0.15rem unset;
+            margin-top: -0.2rem;
         }
 
         #channelID {
-            top: 0.25rem;
+            //top: 0.25rem;
+            // from .35rem
+            top: 0.35rem;
+            //inset: unset unset 0.25rem unset;
+            margin-top: -0.1rem;
         }
+    }
+
+    @mixin cardNo() {
+        margin-top: 0rem;
+        height: 5rem;
+    }
+    @mixin cardYes() {
+        margin-top: 1rem;
+        height: 4rem;
+    }
+    @mixin channelNameNo() {
+        margin-bottom: 0px;
+    }
+    @mixin channelNameYes() {
+        margin-bottom: -0.25rem;
+    }
+    @mixin channelIconNo() {
+        scale: 1;
+        margin-top: 0px;
+    }
+    @mixin channelIconYes() {
+        scale: 0.8;
+        margin-top: -0.2rem;
+    }
+    @mixin channelIDNo() {
+        margin-top: 0px;
+    }
+    @mixin channelIDYes() {
+        margin-top: -0.1rem;
+    }
+
+    @mixin animate($from, $to) {
+        animation: animate-card-#{$from}-#{$to} 0.25s ease-out forwards;
+
+        @keyframes animate-card-#{$from}-#{$to} {
+            from {
+                @if $from == 0 {
+                    @include cardNo();
+                } @else {
+                    @include cardYes();
+                }
+            }
+            to {
+                @if $to == 0 {
+                    @include cardNo();
+                } @else {
+                    @include cardYes();
+                }
+            }
+        }
+
+        #channelName {
+            animation: animate-name-#{$from}-#{$to} 0.25s ease-out forwards;
+
+            @keyframes animate-name-#{$from}-#{$to} {
+                from {
+                    @if $from == 0 {
+                        @include channelNameNo();
+                    } @else {
+                        @include channelNameYes();
+                    }
+                }
+                to {
+                    @if $to == 0 {
+                        @include channelNameNo();
+                    } @else {
+                        @include channelNameYes();
+                    }
+                }
+            }
+        }
+
+        #channelIcon {
+            animation: animate-icon-#{$from}-#{$to} 0.25s ease-out forwards;
+
+            @keyframes animate-icon-#{$from}-#{$to} {
+                from {
+                    @if $from == 0 {
+                        @include channelIconNo();
+                    } @else {
+                        @include channelIconYes();
+                    }
+                }
+                to {
+                    @if $to == 0 {
+                        @include channelIconNo();
+                    } @else {
+                        @include channelIconYes();
+                    }
+                }
+            }
+        }
+
+        #channelID {
+            animation: animate-id-#{$from}-#{$to} 0.25s ease-out forwards;
+
+            @keyframes animate-id-#{$from}-#{$to} {
+                from {
+                    @if $from == 0 {
+                        @include channelIDNo();
+                    } @else {
+                        @include channelIDYes();
+                    }
+                }
+                to {
+                    @if $to == 0 {
+                        @include channelIDNo();
+                    } @else {
+                        @include channelIDYes();
+                    }
+                }
+            }
+        }
+    }
+
+    &.sendsActive.lastSendsNotActive {
+        // FROM NO to YES
+        @include animate(0, 1);
+    }
+
+    &.sendsActive.lastSendsActive {
+        //YES
+        //margin-top: 1rem;
+        //height: 4rem;
+        @include animate(1, 1);
+    }
+
+    &.sendsNotActive.lastSendsActive {
+        // FROM YES to NO
+        @include animate(1, 0);
+    }
+
+    &.sendsNotActive.lastSendsNotActive {
+        //@include animate(0, 0);
+    }
+
+    &.sendsActiveStartingStyle {
+        outline-offset: -2px;
+        /*@starting-style {
+            @include sendsActiveMixin();
+
+            //margin-top: 1rem;
+        }
+
+        &,
+        > *,
+        &::after,
+        &::before {
+            // transition: all 0s !important;
+            //transition-delay: 1s;
+        }*/
+
+        /*
+            transition: 0.25s ease-out;
+            // no top & bottom transition because of jumping in safari
+            // -> changed to margins
+            transition-property: height, margin, scale, margin-top,
+                margin-bottom;
+        */
+
+        /* animation: 0.25s ease-out forwards;
+
+        @keyframes sass {
+            to {
+                margin-top: 1rem;
+                height: 4rem;
+            }
+        } */
+    }
+
+    &.sendsInactiveStartingStyle {
+        outline-offset: -2px;
+        /*@starting-style {
+            @include defaultStyle();
+
+            //transition: none !important;
+            margin-top: 0px;
+        }*/
+
+        /*animation: 0.25s ease-out forwards;
+
+        @keyframes sass {
+            to {
+                @include defaultStyle();
+            }
+        }*/
     }
 }

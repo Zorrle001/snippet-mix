@@ -11,6 +11,7 @@ import styles from "@/styles/SnippetPageStyle.module.scss";
 import ChannelsTab from "./tabs/ChannelsTab";
 import DesignTab from "./tabs/DesignTab";
 import InputTab, { InputTabShortcutButtons } from "./tabs/InputTab";
+import OutputTab, { OutputTabShortcutButtons } from "./tabs/OutputTab";
 
 type Props = {};
 
@@ -83,6 +84,11 @@ export default function SnippetPage({}: Props) {
                         snippets={snippets}
                         snippetObj={snippetObj}
                     />
+                ) : tab == Tabs.Outputs ? (
+                    <OutputTabShortcutButtons
+                        snippets={snippets}
+                        snippetObj={snippetObj}
+                    />
                 ) : null}
 
                 <section id={homeStyles.backBtn}>
@@ -98,6 +104,8 @@ export default function SnippetPage({}: Props) {
             </nav>
             {tab == Tabs.Inputs ? (
                 <InputTab snippets={snippets} snippetObj={snippetObj} />
+            ) : tab == Tabs.Outputs ? (
+                <OutputTab snippets={snippets} snippetObj={snippetObj} />
             ) : tab == Tabs.Channels ? (
                 <ChannelsTab snippets={snippets} snippetObj={snippetObj} />
             ) : tab == Tabs.Design ? (

@@ -94,6 +94,14 @@ export default function ChannelsTab({ snippets, snippetObj }: Props) {
                                 },
                             };*/
                             selectedChannels.push(channelID);
+                            selectedChannels.sort((a, b) => {
+                                // Extrahiere die Zahl nach "ch" aus jedem String und konvertiere sie in eine Zahl
+                                const numA = parseInt(a.replace("ch", ""));
+                                const numB = parseInt(b.replace("ch", ""));
+
+                                // Vergleiche die extrahierten Zahlen
+                                return numA - numB;
+                            });
                             setSnippets(() => [...snippets]);
                         }
                     }}

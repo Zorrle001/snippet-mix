@@ -14,6 +14,10 @@
     container: inputTab / inline-size;
     overflow: hidden;
 
+    &.noMasterSection {
+        grid-template-columns: 1fr !important;
+    }
+
     /*&:has(#outputChannelList li) {
         background-color: blue !important;
         //grid-template-columns: 1fr calc(7.5rem + 4rem) !important;
@@ -49,7 +53,8 @@
 
             grid-column: 1/-1;
 
-            container: faderContainer / inline-size;
+            --containerName: containerName;
+            container: var(--containerName) / inline-size;
 
             width: 100%;
             height: 100%;
@@ -88,7 +93,11 @@
                 position: sticky;
                 left: 0px;
                 //margin-top: calc(-5rem - 2px);
-                bottom: 4rem;
+                //bottom: 4rem;
+                //bottom: calc(4rem + max(0px, (100cqh - 45rem) / 2));
+
+                //NOT WORKING WITH SCROLLBAR & Magic Numbers!!
+                bottom: max(calc((100cqh - 45rem) / 2 - 53px), 4rem);
                 width: 0px;
 
                 //grid-column: 1/-1;

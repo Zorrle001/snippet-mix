@@ -242,6 +242,7 @@ export default function SnippetDesignPopUp({
                         snippetIcon: icon,
                         snippetColor: color,
                         snippetChannels,
+                        snippetOutputChannels: {},
                     });
                 }}
             />

@@ -109,7 +109,7 @@
         }
 
         #pages {
-            margin-left: auto;
+            //margin-left: auto;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -229,6 +229,11 @@
                     border-color: #1ca36c;
                     background-color: #1ca36d80;
                 }
+
+                &#deleteBtn {
+                    border-color: #a1a1a5;
+                    background-color: #a1a1a580;
+                }
             }
         }
 
@@ -347,13 +352,35 @@
             //background-color: #007644;
             //border: 1px solid #007644;
 
-            > div {
+            #homeGridField.editMode {
                 border: 1px solid #007644;
+
+                &:has(article) {
+                    border: 0px solid black;
+                }
+            }
+
+            #homeGridField:not(.editMode) {
+                border: 1px solid #333;
+
+                &:has(article) {
+                    border: 0px solid black;
+                }
             }
 
             //grid-template-columns: 0px;
             //grid-auto-columns: 5rem;
             //grid-auto-flow: column;
+
+            #homeGridField.editMode:not(:has(article)) {
+                cursor: pointer;
+                transition: background-color 0.15s linear;
+                //border: 0px solid black;
+
+                &:hover {
+                    background-color: lighten(black, 10%);
+                }
+            }
         }
 
         #sidebarCollumnLeft,

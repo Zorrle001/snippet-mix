@@ -1,6 +1,7 @@
 import { FontClassName } from "@/app/layout";
 import { usePopUpStore } from "@/hooks/usePopUpStore";
 import styles from "@/styles/PopUpStyles.module.scss";
+import { cn } from "@/utils/Utils";
 import { MouseEventHandler, ReactElement, ReactNode } from "react";
 
 type PopUpProps = {
@@ -11,7 +12,7 @@ type PopUpProps = {
         ReactElement<typeof PopUpActions>
     ];
 };
-type FloatingPopUpProps = {
+type FloatingHeadlessPopUpProps = {
     title: string;
     children: [
         ReactElement<typeof PopUpContent>,
@@ -71,6 +72,40 @@ export function FloatingPopUp({ title, children }: PopUpProps) {
                 <i className="fa-solid fa-xmark"></i>
             </section>
             <section id={styles.headerSection}>{Header}</section>
+            <section id={styles.contentSection}>{Content}</section>
+
+            <section id={styles.actionSection}>{Actions}</section>
+        </article>
+    );
+}
+
+export function FloatingHeadlessPopUp({
+    title,
+    children,
+}: FloatingHeadlessPopUpProps) {
+    const [Content, Actions] = children;
+
+    const setOpenedPopUp = usePopUpStore((state) => state.setOpenedPopUp);
+
+    return (
+        <article
+            id={styles.popup}
+            className={cn(styles.floating, styles.headless)}
+        >
+            <section id={styles.headline}>
+                <div></div>
+                <h1>{title}</h1>
+                <div></div>
+            </section>
+
+            <section
+                id={styles.closeBtn}
+                onClick={() => {
+                    setOpenedPopUp(null);
+                }}
+            >
+                <i className="fa-solid fa-xmark"></i>
+            </section>
             <section id={styles.contentSection}>{Content}</section>
 
             <section id={styles.actionSection}>{Actions}</section>

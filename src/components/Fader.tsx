@@ -12,6 +12,7 @@ type Props = {
     onChannelObjUpdate: () => void;
     sendsActive?: boolean;
     glowColor?: string;
+    sendsActiveStartingStyle?: boolean;
 };
 
 export default function Fader({
@@ -21,6 +22,7 @@ export default function Fader({
     onChannelObjUpdate,
     sendsActive = false,
     glowColor = undefined,
+    sendsActiveStartingStyle,
 }: Props) {
     /*const [value, setValue] = useState(
         channelObj.fader.value ? channelObj.fader.value : 0
@@ -36,9 +38,18 @@ export default function Fader({
 
     useEffect(() => {
         // TO PREVENT STUCK PERCENTAGE AFTER MANUAL CHANGE AND THEN SERVER RECIEVED CHANGE
-        value = channelObj.fader.value ? channelObj.fader.value : 0;
-        if (!sliderValueRef.current) return;
-        sliderValueRef.current.innerHTML = `${(value * 100).toFixed(2)}%`;
+        const newValue = channelObj.fader.value ? channelObj.fader.value : 0;
+
+        if (!sliderValueRef.current) {
+            value = newValue;
+            return;
+        }
+
+        if (value !== newValue) {
+            sliderValueRef.current.innerText = `${(value * 100).toFixed(2)}%`;
+        }
+
+        value = newValue;
     }, [channelObj]);
 
     return (
@@ -227,6 +238,7 @@ export default function Fader({
                     name={channelID}
                     onClick={() => {}}
                     sendsActive={sendsActive}
+                    sendsActiveStartingStyle={sendsActiveStartingStyle}
                 />
             </section>
         </article>
@@ -241,7 +253,6 @@ export default function Fader({
         ) {
             //e.preventDefault();
 
-            console.log("MOVE");
             // @ts-ignore
             const y = e.pageY ? e.pageY : e.changedTouches.item(0)?.pageY;
 
@@ -257,9 +268,11 @@ export default function Fader({
             //setValue(percentage);
             value = percentage;
             thumbRef.current.style.setProperty("--value", `${percentage}`);
-            sliderValueRef.current.innerHTML = `${(percentage * 100).toFixed(
+            sliderValueRef.current.innerText = `${(percentage * 100).toFixed(
                 2
             )}%`;
+
+            console.log("SET NEW VALUE");
             /*sliderValueRef.current.dataset.value = (percentage * 100).toFixed(
                 2
             );*/
