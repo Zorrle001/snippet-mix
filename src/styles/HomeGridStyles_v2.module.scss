@@ -1,0 +1,416 @@
+#homeGridWrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+
+    //display: grid;
+    //place-items: center;
+    //grid-auto-flow: column;
+    //grid-template-columns: 1fr min-content 1fr;
+
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    justify-content: safe center;
+    align-items: safe center;
+
+    padding: 5rem;
+
+    #textInsertBox {
+        position: relative;
+        width: fit-content;
+        height: fit-content;
+        display: flex;
+        flex-direction: column;
+
+        &:has(> #textInsertWrapper) {
+            margin-top: 1rem;
+        }
+
+        //padding-inline: 0.5rem;
+
+        //overflow: hidden;
+
+        #textInsertWrapper {
+            position: relative;
+            max-height: calc(2rem * 1.5);
+            width: calc(100% + var(--height) + 0.5rem);
+            --height: calc(2rem * 1.5);
+            height: var(--height);
+
+            margin-left: calc(var(--height) * -1 - 0.5rem);
+            //padding-left: 3rem;
+            //padding-right: 0.5rem;
+
+            display: grid;
+            grid-template-columns: var(--height) 1fr;
+            gap: 0.5rem;
+
+            container: textInsertContainer / size;
+
+            &:not(.editMode) {
+                cursor: normal;
+                pointer-events: none;
+
+                & #textInsertInput {
+                    user-select: none;
+                    -webkit-user-select: none;
+                }
+            }
+
+            &.H1 {
+                font-size: 2rem;
+                font-weight: 800;
+                --height: calc(2rem * 1.5);
+            }
+
+            &.H2 {
+                font-size: 1.6rem;
+                font-weight: 500;
+                --height: calc(1.6rem * 1.5);
+            }
+
+            &.H3 {
+                font-size: 1.2rem;
+                font-weight: 450;
+                --height: calc(1.2rem * 1.5);
+            }
+
+            &.Label {
+                font-size: 1rem;
+                font-weight: 350;
+                --height: calc(1rem * 1.5);
+            }
+
+            > span {
+                width: 100cqh;
+                height: 100%;
+                //height: 100cqh;
+                //width: 100cqh;
+                background-color: lighten(#3838e0, 30%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                visibility: hidden;
+
+                color: black;
+                font-weight: 700;
+
+                //font-size: min(0.8em, 1rem);
+                font-size: 0.5em;
+                font-weight: inherit;
+
+                user-select: none;
+                -webkit-user-select: none;
+                cursor: pointer;
+            }
+
+            > button {
+                all: unset;
+                box-sizing: border-box;
+                position: absolute;
+                height: 100%;
+                right: 0px;
+                top: 0px;
+                color: white;
+
+                font-size: min(0.8em, 1.5rem);
+                //margin-right: 0.25em;
+                height: 100%;
+                aspect-ratio: 1 / 1;
+                //width: 3rem;
+                //background-color: beige;
+                font-weight: inherit;
+
+                display: grid;
+                place-content: center;
+
+                cursor: pointer;
+
+                visibility: hidden;
+
+                &:hover {
+                    background-color: rgba(255, 255, 255, 0.15);
+                }
+            }
+
+            //&.editMode:has(#textInsertInput:focus-visible)
+            &.editMode.selected {
+                outline: 2px solid #3838e0;
+                border-radius: 0.25rem;
+
+                > span {
+                    visibility: visible;
+                }
+
+                > button {
+                    visibility: visible;
+                }
+            }
+
+            #textInsertInput {
+                all: unset;
+                position: relative;
+                color: white;
+                width: 100%;
+                height: fit-content;
+                cursor: text;
+
+                font-size: inherit;
+
+                & + span {
+                    position: absolute;
+                    top: 0px;
+                    left: -3rem;
+                    height: fit-content;
+                    width: 2.5rem;
+                    background-color: lighten(#3838e0, 30%);
+
+                    display: none;
+                }
+            }
+        }
+    }
+
+    #gridRow {
+        position: relative;
+        width: fit-content;
+        display: flex;
+        gap: 1rem;
+
+        #homeGridField {
+            position: relative;
+            width: 7.5rem;
+            height: 7.5rem;
+            border: 1px solid #333;
+
+            &:has(article) {
+                border: 0px solid black;
+            }
+
+            &.editMode:not(:has(article)) {
+                border: 1px solid #007644;
+
+                &.editMode {
+                    cursor: pointer;
+                    transition: background-color 0.15s linear;
+                    //border: 0px solid black;
+
+                    &:hover {
+                        background-color: lighten(black, 10%);
+                    }
+                }
+            }
+        }
+
+        > #textInsert {
+            position: absolute;
+            left: -4rem;
+            top: calc(-1.75rem / 2 - 1rem / 2);
+            background-color: rgb(56, 56, 224);
+            color: white;
+            width: 1.75rem;
+            height: 1.75rem;
+
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            border-top-left-radius: 0.4rem;
+            border-bottom-left-radius: 0.4rem;
+
+            transition: 0.15s filter linear;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+
+            padding-left: 0.35rem;
+            padding-bottom: 0.1rem;
+
+            &:hover {
+                filter: brightness(0.8);
+            }
+
+            &::after {
+                content: "";
+                position: absolute;
+                top: 0px;
+                left: 1.75rem;
+                height: 0px;
+                width: 1rem;
+                border: 0.88rem solid transparent;
+                border-left-color: rgb(56, 56, 224);
+            }
+
+            &.addRowTag,
+            &.addCollumnTag {
+                background-color: #505050;
+                padding-bottom: 0px;
+                padding-left: 0.5rem;
+
+                &::after {
+                    border-left-color: #505050;
+                }
+            }
+
+            &.removeRowTag,
+            &.removeCollumnTag {
+                //padding-left: 0.25rem;
+                //padding-top: 0.1rem;
+                padding: 0;
+                border-radius: 0.4rem;
+
+                margin-left: 0.35rem;
+
+                background-color: rgb(187, 69, 69);
+
+                &::after {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    &:has(input:focus-visible) #textInsert {
+        display: none !important;
+    }
+
+    #sidebarCollumnLeft,
+    #sidebarCollumnRight {
+        position: relative;
+        width: 100%;
+        height: 100%;
+
+        #sidebarWrapperLeft,
+        #sidebarWrapperRight {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            width: 4rem;
+            height: 100%;
+
+            display: grid;
+            place-items: center;
+
+            &#sidebarWrapperRight {
+                right: unset;
+                left: 0px;
+                width: 0px;
+            }
+
+            #sidebarLeft,
+            #sidebarRight {
+                position: relative;
+
+                width: 100%;
+                height: fit-content;
+                //background-color: greenyellow;
+
+                display: grid;
+                gap: calc(8.5rem / 2);
+
+                align-items: center;
+
+                margin-top: -0.5rem;
+                margin-bottom: -0.5rem;
+
+                > div {
+                    position: relative;
+                    background-color: rgb(56, 56, 224);
+                    color: white;
+                    width: 1.75rem;
+                    height: 1.75rem;
+
+                    display: grid;
+                    place-items: center;
+                    font-weight: 700;
+                    border-top-left-radius: 0.4rem;
+                    border-bottom-left-radius: 0.4rem;
+
+                    transition: 0.15s filter linear;
+                    cursor: pointer;
+                    user-select: none;
+                    -webkit-user-select: none;
+
+                    padding-left: 0.35rem;
+                    padding-bottom: 0.1rem;
+
+                    &:hover {
+                        filter: brightness(0.8);
+                    }
+
+                    &::after {
+                        content: "";
+                        position: absolute;
+                        top: 0px;
+                        left: 1.75rem;
+                        height: 0px;
+                        width: 1rem;
+                        border: 0.88rem solid transparent;
+                        border-left-color: rgb(56, 56, 224);
+                    }
+
+                    &.addRowTag,
+                    &.addCollumnTag {
+                        background-color: #505050;
+                        padding-bottom: 0px;
+                        padding-left: 0.5rem;
+
+                        &::after {
+                            border-left-color: #505050;
+                        }
+                    }
+
+                    &.removeRowTag,
+                    &.removeCollumnTag {
+                        //padding-left: 0.25rem;
+                        //padding-top: 0.1rem;
+                        padding: 0;
+                        border-radius: 0.4rem;
+
+                        margin-left: 0.35rem;
+
+                        background-color: rgb(187, 69, 69);
+
+                        &::after {
+                            display: none;
+                        }
+                    }
+                }
+
+                &#sidebarRight {
+                    height: 100%;
+
+                    > div {
+                        rotate: 90deg;
+
+                        &.addCollumnTag {
+                            padding-left: 0rem;
+
+                            position: absolute;
+                            top: -4rem;
+                            margin-left: -0.375rem;
+
+                            > i {
+                                scale: -1;
+                            }
+                        }
+                        &.removeCollumnTag {
+                            padding-left: 0rem;
+
+                            position: absolute;
+                            top: -3.65rem;
+                            margin-left: calc(-7.5rem / 2 + -1.75rem / 2);
+
+                            > i {
+                                scale: -1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -32,10 +32,10 @@ export type PageObjRowDataListType = {
 };
 
 export enum TextTypeEnum {
-    H1,
-    H2,
-    H3,
-    Paragraph,
+    H1 = "H1",
+    H2 = "H2",
+    H3 = "H3",
+    Label = "Label",
 }
 
 export type PageObjRowDataTextType = {

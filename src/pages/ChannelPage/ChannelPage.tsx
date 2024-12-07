@@ -6,27 +6,43 @@ import { PopUps, usePopUpStore } from "@/hooks/usePopUpStore";
 import { useSnippetPageStore } from "@/hooks/useSnippetPageStore";
 import { useSnippetStore } from "@/hooks/useSnippetStore";
 
+import { COLORS } from "@/components/ColorCard";
+import { useChannelPageStore } from "@/hooks/useChannelPageStore";
 import homeStyles from "@/styles/HomeStyles.module.scss";
 import styles from "@/styles/SnippetPageStyle.module.scss";
-import ChannelsTab from "./tabs/ChannelsTab";
-import DesignTab from "./tabs/DesignTab";
-import InputTab, { InputTabShortcutButtons } from "./tabs/InputTab";
-import OutputTab, { OutputTabShortcutButtons } from "./tabs/OutputTab";
+import CompressorTab from "./tabs/CompressorTab";
+import EqualizerTab from "./tabs/EqualizerTab";
 
 type Props = {};
 
-export enum SnippetPageTabs {
-    Inputs,
-    Outputs,
-    Channels,
-    Fade,
-    Groups,
+export enum ChannelPageTabs {
+    Input,
+    EQ,
+    Gate,
+    Comp,
+    SendTo,
     Design,
 }
 
-export default function SnippetPage({}: Props) {
-    const tab = useSnippetPageStore((state) => state.tab);
-    const setTab = useSnippetPageStore((state) => state.setTab);
+export default function ChannelPage({}: Props) {
+    const tab = useChannelPageStore((state) => state.tab);
+    const setTab = useChannelPageStore((state) => state.setTab);
+
+    const selectedChannelID = useChannelPageStore(
+        (state) => state.selectedChannelID
+    );
+    const setSelectedChannelID = useChannelPageStore(
+        (state) => state.setSelectedChannelID
+    );
+
+    const selectedChannelObj = useChannelPageStore(
+        (state) => state.selectedChannelObj
+    );
+    const setSelectedChannelObj = useChannelPageStore(
+        (state) => state.setSelectedChannelObj
+    );
+
+    if (!selectedChannelID || !selectedChannelObj) return;
 
     const setOpenedPopUp = usePopUpStore((state) => state.setOpenedPopUp);
 
@@ -80,103 +96,96 @@ export default function SnippetPage({}: Props) {
                         Online
                     </button>
                 </section>
-                {tab == SnippetPageTabs.Inputs ? (
+                {/* {false && tab == ChannelPageTabs.Gain ? (
                     <InputTabShortcutButtons
                         snippets={snippets}
                         snippetObj={snippetObj}
                     />
-                ) : tab == SnippetPageTabs.Outputs ? (
-                    <OutputTabShortcutButtons
-                        snippets={snippets}
-                        snippetObj={snippetObj}
-                    />
-                ) : null}
+                ) : null} */}
 
                 <section id={homeStyles.backBtn}>
                     <button
                         onClick={() => {
-                            setSelectedSnippet(null);
+                            setSelectedChannelID(null);
+                            setSelectedChannelObj(null);
                         }}
                     >
-                        <i className="fa-solid fa-house"></i>
-                        <p className={FontClassName}>Home</p>
+                        <i className="fa-solid fa-arrow-left"></i>
+                        <p className={FontClassName}>Zurück</p>
                     </button>
                 </section>
             </nav>
-            {tab == SnippetPageTabs.Inputs ? (
-                <InputTab snippets={snippets} snippetObj={snippetObj} />
-            ) : tab == SnippetPageTabs.Outputs ? (
-                <OutputTab snippets={snippets} snippetObj={snippetObj} />
-            ) : tab == SnippetPageTabs.Channels ? (
-                <ChannelsTab snippets={snippets} snippetObj={snippetObj} />
-            ) : tab == SnippetPageTabs.Design ? (
-                <DesignTab snippets={snippets} snippetObj={snippetObj} />
+            {tab == ChannelPageTabs.EQ ? (
+                <EqualizerTab />
+            ) : tab == ChannelPageTabs.Comp ? (
+                <CompressorTab />
             ) : (
                 <div></div>
             )}
             <nav id={styles.bottomNav}>
                 <section id={styles.flatSnippetCardSection}>
                     <FlatSnippetCard
-                        id={snippetObj.snippetID}
-                        color={snippetObj.snippetColor}
-                        name={snippetObj.snippetName}
-                        icon={snippetObj.snippetIcon}
-                        prevEnabled={selectedSnippet != 1}
-                        nextEnabled={snippets.length > selectedSnippet}
+                        id={selectedChannelID}
+                        color={COLORS.Cyan}
+                        name={selectedChannelID}
+                        icon={"fa-solid fa-arrow-right-to-bracket"}
+                        prevEnabled={selectedChannelID != "ch1"}
+                        nextEnabled={selectedChannelID != "ch64"}
                         onPrev={() => {
-                            setSelectedSnippet(selectedSnippet - 1);
+                            //setSelectedSnippet(selectedSnippet - 1);
                         }}
                         onNext={() => {
-                            setSelectedSnippet(selectedSnippet + 1);
+                            //setSelectedSnippet(selectedSnippet + 1);
                         }}
                     />
                 </section>
+
                 <section id={styles.tabSection}>
                     <div
                         className={
-                            tab == SnippetPageTabs.Inputs ? styles.active : ""
+                            tab == ChannelPageTabs.Input ? styles.active : ""
                         }
-                        onClick={() => setTab(SnippetPageTabs.Inputs)}
+                        onClick={() => setTab(ChannelPageTabs.Input)}
                     >
-                        Inputs
+                        Input
                     </div>
                     <div
                         className={
-                            tab == SnippetPageTabs.Outputs ? styles.active : ""
+                            tab == ChannelPageTabs.EQ ? styles.active : ""
                         }
-                        onClick={() => setTab(SnippetPageTabs.Outputs)}
+                        onClick={() => setTab(ChannelPageTabs.EQ)}
                     >
-                        Outputs
+                        EQ
                     </div>
                     <div
                         className={
-                            tab == SnippetPageTabs.Channels ? styles.active : ""
+                            tab == ChannelPageTabs.Gate ? styles.active : ""
                         }
-                        onClick={() => setTab(SnippetPageTabs.Channels)}
+                        onClick={() => setTab(ChannelPageTabs.Gate)}
                     >
-                        Channels
+                        Gate
                     </div>
                     <div
                         className={
-                            tab == SnippetPageTabs.Fade ? styles.active : ""
+                            tab == ChannelPageTabs.Comp ? styles.active : ""
                         }
-                        onClick={() => setTab(SnippetPageTabs.Fade)}
+                        onClick={() => setTab(ChannelPageTabs.Comp)}
                     >
-                        Fade
+                        Comp
                     </div>
                     <div
                         className={
-                            tab == SnippetPageTabs.Groups ? styles.active : ""
+                            tab == ChannelPageTabs.SendTo ? styles.active : ""
                         }
-                        onClick={() => setTab(SnippetPageTabs.Groups)}
+                        onClick={() => setTab(ChannelPageTabs.SendTo)}
                     >
-                        Groups
+                        Send To
                     </div>
                     <div
                         className={
-                            tab == SnippetPageTabs.Design ? styles.active : ""
+                            tab == ChannelPageTabs.Design ? styles.active : ""
                         }
-                        onClick={() => setTab(SnippetPageTabs.Design)}
+                        onClick={() => setTab(ChannelPageTabs.Design)}
                     >
                         Design
                     </div>

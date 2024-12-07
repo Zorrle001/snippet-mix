@@ -1,6 +1,7 @@
 "use client";
 
 import { SnippetObjType } from "@/components/PopUps/CreateSnippetPopUp";
+import useLocalStorage from "@/hooks/useLocalStorage";
 import { useNodeConnectionManagerStore } from "@/hooks/useNodeConnectionManagerStore";
 import { PageObjType, usePagesStore } from "@/hooks/usePagesStore";
 import { useSnippetStore } from "@/hooks/useSnippetStore";
@@ -32,6 +33,12 @@ export default function Node({}) {
     const [nodeSnippets, setNodeSnippets] = useState<SnippetObjType[]>([]);
     const [nodePages, setNodePages] = useState<PageObjType[]>([]);
 
+    const [nodeURL, setNodeURL] = useLocalStorage("nodeURL", null);
+    if (nodeURL == null && typeof window !== "undefined") {
+        //redirect("/nodes");
+        window.location.href = "/nodes";
+    }
+
     const {
         sendMessage,
         sendJsonMessage,
@@ -39,7 +46,7 @@ export default function Node({}) {
         lastJsonMessage,
         readyState,
         getWebSocket,
-    } = useWebSocket("ws://192.168.178.37:8080/", {
+    } = useWebSocket("ws://" + nodeURL, {
         share: true,
         onOpen: () => {
             // MOVED TO Connect Message
@@ -49,6 +56,9 @@ export default function Node({}) {
         onClose: () => {
             setConnected(false);
             setLoading(false);
+        },
+        onError: (e) => {
+            console.error(e);
         },
         onMessage: () => {
             console.log("Message:", new Date().getTime());

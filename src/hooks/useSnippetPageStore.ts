@@ -1,12 +1,12 @@
-import { Tabs } from "@/pages/SnippetPage/SnippetPage";
+import { SnippetPageTabs } from "@/pages/SnippetPage/SnippetPage";
 import { create } from "zustand";
 
 export type SnippetPageStoreType = {
     selectedSnippet: number | null;
     setSelectedSnippet: (snippetID: number | null) => void;
     isPageVisible: () => boolean;
-    tab: Tabs;
-    setTab: (tab: Tabs) => void;
+    tab: SnippetPageTabs;
+    setTab: (tab: SnippetPageTabs) => void;
 };
 
 export const useSnippetPageStore = create<SnippetPageStoreType>((set, get) => ({
@@ -15,6 +15,6 @@ export const useSnippetPageStore = create<SnippetPageStoreType>((set, get) => ({
         set({ selectedSnippet: snippetID });
     },
     isPageVisible: () => get().selectedSnippet !== null,
-    tab: Tabs.Inputs,
+    tab: SnippetPageTabs.Inputs,
     setTab: (tab) => set({ tab }),
 }));

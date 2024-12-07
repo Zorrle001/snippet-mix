@@ -1,4 +1,5 @@
 import { FontClassName } from "@/app/layout";
+import { useChannelPageStore } from "@/hooks/useChannelPageStore";
 import styles from "@/styles/FaderStyles.module.scss";
 import { cn } from "@/utils/Utils";
 import { CSSProperties, useEffect, useRef, useState } from "react";
@@ -36,6 +37,13 @@ export default function Fader({
 
     const [thumbOffset, setThumbOffset] = useState(0);
 
+    const setSelectedChannelID = useChannelPageStore(
+        (state) => state.setSelectedChannelID
+    );
+    const setSelectedChannelObj = useChannelPageStore(
+        (state) => state.setSelectedChannelObj
+    );
+
     useEffect(() => {
         // TO PREVENT STUCK PERCENTAGE AFTER MANUAL CHANGE AND THEN SERVER RECIEVED CHANGE
         const newValue = channelObj.fader.value ? channelObj.fader.value : 0;
@@ -67,6 +75,10 @@ export default function Fader({
             <section
                 id={styles.propertySection}
                 className={channelObj.gain.enabled ? "" : styles.disabled}
+                onClick={() => {
+                    setSelectedChannelID(channelID);
+                    setSelectedChannelObj(channelObj);
+                }}
             >
                 <button
                     id={styles.propertySelBtn}

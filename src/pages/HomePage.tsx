@@ -1,7 +1,7 @@
 "use client";
 
 import { FontClassName } from "@/app/layout";
-import HomeGrid from "@/components/HomeGrid";
+import HomeGrid_v2 from "@/components/HomeGrid v2";
 import SnippetCard from "@/components/SnippetCard";
 import { fallbackPage, usePagesStore } from "@/hooks/usePagesStore";
 import { PopUps, usePopUpStore } from "@/hooks/usePopUpStore";
@@ -34,17 +34,26 @@ export default function HomePage({}: Props) {
     const setActivePage = usePagesStore((state) => state.setActivePage);
 
     if (pages.length == 0) {
-        return <h1 style={{ color: "white" }}>Loading Server Side Pages</h1>;
+        return <h1 style={{ color: "white" }}>Loading Pages from Node</h1>;
     }
 
     const pageObj = pages[activePage];
 
     let index = 0;
     const optionElements = pages.map((pageObj) => {
-        return <option value={index++}>{pageObj.name}</option>;
+        const value = index++;
+        return (
+            <option value={value} key={value}>
+                {pageObj.name}
+            </option>
+        );
     });
 
-    optionElements.push(<option value={-1}>+ New Page</option>);
+    optionElements.push(
+        <option value={-1} key={-1}>
+            + New Page
+        </option>
+    );
 
     const snippetCards = snippets.map((snippetObj) => (
         <SnippetCard
@@ -66,13 +75,14 @@ export default function HomePage({}: Props) {
         <article id={styles.home}>
             <nav id={styles.topNav}>
                 <section id={styles.logo}>
-                    <div></div>
+                    {/* <div></div>
                     <h1>
                         Snippet
                         <br />
                         Mix
                     </h1>
-                    <div></div>
+                    <div></div> */}
+                    <img src="TransparentWhiteSlimSnippetMixLogo.png" />
                 </section>
                 <section id={styles.status}>
                     <p>Status</p>
@@ -158,7 +168,7 @@ export default function HomePage({}: Props) {
                 </section>
             </nav>
             {/* {snippetCards} */}
-            <HomeGrid
+            <HomeGrid_v2
                 snippetCards={snippetCards}
                 pages={pages}
                 activePage={activePage}

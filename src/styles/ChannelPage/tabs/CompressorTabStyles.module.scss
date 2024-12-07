@@ -1,0 +1,262 @@
+#compressorTab {
+    container: compressorTab / size;
+
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    display: grid;
+    align-items: center;
+    grid-template-columns: auto 1fr;
+    gap: 3rem;
+
+    overflow: hidden;
+
+    padding: 3rem;
+
+    #leftPart {
+        position: relative;
+        //width: 100%;
+        //height: 100%;
+
+        width: calc(min(40cqw - 3.6rem, 100cqh - 30px) + 3.6rem);
+        height: calc(min(40cqw - 3.6rem, 100cqh - 30px) + 30px);
+
+        flex-grow: 0;
+        flex-shrink: 0;
+
+        div.compressorDot {
+            position: absolute;
+            width: fit-content;
+            height: fit-content;
+
+            display: flex;
+            flex-direction: column;
+
+            user-select: none;
+            -webkit-user-select: none;
+
+            --color: green;
+
+            .circle {
+                width: 2rem;
+                height: 2rem;
+                border: 2px solid var(--color);
+                background-color: color-mix(
+                    in hsl,
+                    var(--color),
+                    transparent 50%
+                );
+                border-radius: 100%;
+
+                display: grid;
+                place-content: center;
+
+                cursor: pointer;
+
+                > p {
+                    font-size: 1rem;
+                    color: white;
+                    font-weight: 600;
+                    pointer-events: none;
+                    text-align: center;
+                }
+            }
+
+            > p {
+                font-size: 1rem;
+                color: lightgray;
+                font-weight: 500;
+                margin-top: 0.25rem;
+                pointer-events: none;
+            }
+        }
+    }
+
+    #rightPart {
+        position: relative;
+        color: white;
+
+        position: relative;
+        height: 100%;
+        width: 100%;
+
+        flex-shrink: 1;
+
+        //padding: 3rem;
+
+        /*display: grid;
+        grid-template-rows: 30% 70%;
+        gap: 3rem;*/
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        #historyChartSection {
+            position: relative;
+            width: 100%;
+            height: 30%;
+        }
+
+        #sliderSection {
+            position: relative;
+            padding: 3rem;
+
+            display: grid;
+            grid-template-columns: 10rem 1fr;
+            gap: 2rem;
+
+            #horizontal {
+                padding-block: 1.5rem;
+            }
+
+            #vertical {
+                position: relative;
+                height: 100%;
+                width: 100%;
+                float: left;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                > div {
+                    position: relative;
+                    width: 50%;
+                    height: 100%;
+                    //rotate: 90deg;
+
+                    flex-grow: 1;
+
+                    display: flex;
+                    flex-direction: column;
+
+                    .input {
+                        writing-mode: vertical-lr;
+                        height: auto;
+                        flex-grow: 1;
+
+                        &.fliped {
+                            rotate: 180deg;
+                        }
+
+                        //direction: rtl;
+                        //appearance: slider-vertical;
+
+                        &::-webkit-slider-runnable-track {
+                            width: 0.75rem !important;
+                        }
+
+                        &::-webkit-slider-thumb {
+                            margin-top: 0 !important;
+                            margin-left: -6px;
+                        }
+                    }
+                }
+            }
+
+            #horizontal > p,
+            #vertical > div > p {
+                margin-top: 1.25rem;
+                margin-bottom: 0.5rem;
+                font-size: 1.2rem;
+                width: 100%;
+
+                display: flex;
+                justify-content: space-between;
+
+                color: #999;
+                font-weight: 500;
+
+                &:first-of-type {
+                    margin-top: 0;
+                }
+
+                > span {
+                    color: white;
+                    font-weight: 500;
+                }
+            }
+
+            #vertical > div > p {
+                flex-direction: column;
+                text-align: center;
+
+                > span {
+                    text-align: center;
+                    margin-bottom: 0.5rem;
+                }
+            }
+        }
+    }
+}
+
+/********** Range Input Styles **********/
+/*Range Reset*/
+.input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    width: 100%;
+}
+
+/* Removes default focus */
+.input[type="range"]:focus {
+    outline: none;
+}
+
+/***** Chrome, Safari, Opera and Edge Chromium styles *****/
+/* slider track */
+.input[type="range"]::-webkit-slider-runnable-track {
+    background-color: darken(white, 25%);
+    border-radius: 0.5rem;
+    height: 0.75rem;
+}
+
+/* slider thumb */
+.input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    margin-top: -6px; /* Centers thumb on the track */
+
+    /*custom styles*/
+    background-color: white;
+    height: 1.5rem;
+    width: 1.5rem;
+    border-radius: 50%;
+
+    border: 1px solid #66666680;
+}
+
+.input[type="range"]:focus::-webkit-slider-thumb {
+    //border: 1px solid #333;
+    //outline: 3px solid #053a5f;
+    //outline-offset: 0.125rem;
+}
+
+/******** Firefox styles ********/
+/* slider track */
+.input[type="range"]::-moz-range-track {
+    background-color: darken(white, 25%);
+    border-radius: 0.5rem;
+    height: 0.75rem;
+}
+
+/* slider thumb */
+.input[type="range"]::-moz-range-thumb {
+    border: none; /*Removes extra border that FF applies*/
+    border-radius: 0; /*Removes default border-radius that FF applies*/
+
+    /*custom styles*/
+    background-color: white;
+    height: 1.5rem;
+    width: 1.5rem;
+}
+
+.input[type="range"]:focus::-moz-range-thumb {
+    //border: 1px solid #053a5f;
+    //outline: 3px solid #053a5f;
+    //outline-offset: 0.125rem;
+}

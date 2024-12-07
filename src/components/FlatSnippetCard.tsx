@@ -1,7 +1,7 @@
 import styles from "@/styles/FlatSnippetCardStyles.module.scss";
 
 type Props = {
-    id: number;
+    id: number | string;
     name: string;
     icon?: string;
     color: string[];
@@ -32,7 +32,9 @@ export default function FlatSnippetCard({
                 <i className="fa-solid fa-angle-left"></i>
             </section>
             <i className={icon} id={styles.snippedIcon}></i>
-            <p id={styles.snippedID}>Snp {id}</p>
+            <p id={styles.snippedID}>
+                {typeof id === "number" ? `Snp ${id}` : id}
+            </p>
             <p id={styles.snippedName}>{name}</p>
             <section
                 id={styles.nextSnippet}

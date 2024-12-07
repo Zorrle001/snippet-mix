@@ -1,0 +1,174 @@
+#nodesPage {
+    position: relative;
+    width: 75ch;
+    height: 100%;
+    margin-inline: calc((100% - 75ch) / 2);
+
+    color: white;
+
+    padding-top: 3.5rem;
+
+    nav {
+        position: relative;
+        width: 100%;
+        height: 4.5rem;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        > div {
+            width: fit-content;
+            height: 100%;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            p {
+                font-size: 1.1rem;
+                color: #666666;
+            }
+        }
+
+        > button {
+            width: fit-content;
+            height: 2rem;
+            background-color: white;
+            color: black;
+            transition: 0.2s background-color ease-in-out;
+            border: none;
+            padding-inline: 0.75rem 1rem;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border-radius: 99rem;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            > p {
+                margin-top: -0.1rem;
+                user-select: none;
+                -webkit-user-select: none;
+            }
+
+            @media (hover: hover) {
+                &:hover {
+                    background-color: darken(white, 15%);
+                }
+            }
+        }
+    }
+
+    #connectionList {
+        margin-top: 1.5rem;
+        position: relative;
+        width: 100%;
+        height: fit-content;
+
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        overflow: auto;
+
+        max-height: calc(100% - 6rem - 3.5rem);
+
+        li {
+            border: 1px solid #333;
+            height: 4.5rem;
+            border-radius: 0.5rem;
+
+            flex-shrink: 0;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            padding-inline: 0.75rem;
+
+            > #leftPart {
+                height: 100%;
+                width: fit-content;
+
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+
+                h2 {
+                    font-size: 1.35rem;
+                }
+
+                p {
+                    font-size: 1rem;
+                    color: #666666;
+                }
+            }
+
+            > #rightPart {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                gap: 0.1rem;
+
+                > button,
+                > a {
+                    text-decoration: none;
+                    font-size: 13.333px;
+                    --scaling: 1;
+                    width: fit-content;
+                    height: calc(2rem * var(--scaling));
+                    background-color: white;
+                    color: black;
+                    transition: 0.2s background-color ease-in-out;
+                    border: none;
+                    padding-inline: calc(0.75rem * var(--scaling))
+                        calc(1rem * var(--scaling));
+
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: calc(0.5rem * var(--scaling));
+                    border-radius: 99rem;
+                    font-weight: 700;
+
+                    cursor: pointer;
+
+                    &.smallBtn {
+                        background-color: #333;
+                        color: white;
+                        //transform: scale(0.8);
+                        //height: 1.5rem;
+                        //padding-inline: 0.75rem 1rem;
+                        --scaling: 0.75;
+                        font-size: 0.6rem;
+                    }
+
+                    > p {
+                        margin-top: -0.1rem;
+                        user-select: none;
+                        -webkit-user-select: none;
+                    }
+
+                    @media (hover: hover) {
+                        &:hover {
+                            background-color: darken(white, 15%);
+
+                            &.smallBtn {
+                                background-color: darken(#333, 2.5%);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

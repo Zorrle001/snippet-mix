@@ -1,7 +1,9 @@
 "use client";
 
+import { useChannelPageStore } from "@/hooks/useChannelPageStore";
 import { useNodeConnectionManagerStore } from "@/hooks/useNodeConnectionManagerStore";
 import { useSnippetPageStore } from "@/hooks/useSnippetPageStore";
+import ChannelPage from "@/pages/ChannelPage/ChannelPage";
 import HomePage from "@/pages/HomePage";
 import SnippetPage from "@/pages/SnippetPage/SnippetPage";
 
@@ -12,6 +14,10 @@ export default function PageRenderer() {
     );
 
     const isSnippetPageVisible = useSnippetPageStore((state) =>
+        state.isPageVisible()
+    );
+
+    const isChannelPageVisible = useChannelPageStore((state) =>
         state.isPageVisible()
     );
 
@@ -45,5 +51,11 @@ export default function PageRenderer() {
             </>
         );
 
-    return !isSnippetPageVisible ? <HomePage /> : <SnippetPage />;
+    return isChannelPageVisible ? (
+        <ChannelPage />
+    ) : !isSnippetPageVisible ? (
+        <HomePage />
+    ) : (
+        <SnippetPage />
+    );
 }

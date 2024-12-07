@@ -7,7 +7,7 @@ type Props = {
     id: string;
     name: string;
     selected?: boolean;
-    onClick: MouseEventHandler<HTMLElement>;
+    onClick?: MouseEventHandler<HTMLElement>;
     icon?: string;
     iconStyle?: CSSProperties;
     color?: string[];

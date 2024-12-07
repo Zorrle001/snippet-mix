@@ -1,0 +1,5 @@
+FIX LAGGING SWITCH TO SENDS TO LR
+
+FIX not refreshing percentage numbers of sends on fader channels
+
+fix eq lags
