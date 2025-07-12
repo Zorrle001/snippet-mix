@@ -37,8 +37,8 @@ export default function OutputTab({ snippets, snippetObj }: Props) {
                 outputChannelEnum={outputChannelID as OutputChannelEnum}
                 outputChannelObj={outputChannelObj}
                 onChange={(value: number) => {
-                    outputChannelObj.fader = {
-                        enabled: outputChannelObj.fader.enabled,
+                    outputChannelObj.bus.fader = {
+                        enabled: outputChannelObj.bus.fader.enabled,
                         value,
                     };
                     setSnippets(() => [...snippets]);
@@ -105,10 +105,10 @@ export function OutputTabShortcutButtons({ snippets, snippetObj }: Props) {
                 snippetObj.snippetOutputChannels[outputChannelID];
 
             channelCount++;
-            if (outputChannelObj.fader.enabled == true) {
+            if (outputChannelObj.bus.fader.enabled == true) {
                 enabledFaderChannels++;
             }
-            if (outputChannelObj.muted.enabled == true) {
+            if (outputChannelObj.bus.muted.enabled == true) {
                 enabledMuteChannels++;
             }
         }
@@ -136,9 +136,9 @@ export function OutputTabShortcutButtons({ snippets, snippetObj }: Props) {
                                 ];
 
                             if (!allFaderPropertiesEnabled) {
-                                outputChannelObj.fader.enabled = true;
+                                outputChannelObj.bus.fader.enabled = true;
                             } else {
-                                outputChannelObj.fader.enabled = false;
+                                outputChannelObj.bus.fader.enabled = false;
                             }
                         }
 
@@ -165,9 +165,9 @@ export function OutputTabShortcutButtons({ snippets, snippetObj }: Props) {
                                 ];
 
                             if (!allMutePropertiesEnabled) {
-                                outputChannelObj.muted.enabled = true;
+                                outputChannelObj.bus.muted.enabled = true;
                             } else {
-                                outputChannelObj.muted.enabled = false;
+                                outputChannelObj.bus.muted.enabled = false;
                             }
                         }
 

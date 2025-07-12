@@ -11,6 +11,8 @@ import { removeItemAll } from "@/utils/Utils";
 import { useState } from "react";
 import { SnippetObjType } from "../CreateSnippetPopUp";
 
+import { v4 as uuidv4 } from "uuid";
+
 type Props = {
     onConfirm: (snippetChannels: string[]) => void;
     onCancel: (snippetChannels: string[]) => void;
@@ -38,7 +40,7 @@ export default function SnippetInputPopUp({
             <ChannelCard
                 id={channelID}
                 name={"Channel " + i}
-                key={i}
+                key={uuidv4()}
                 selected={selectedChannels.includes(channelID)}
                 onClick={() => {
                     if (selectedChannels.includes(channelID)) {
@@ -64,6 +66,9 @@ export default function SnippetInputPopUp({
                                     value: null,
                                 },
                             };*/
+                            if (channels.includes(channelID)) {
+                                return [...channels];
+                            }
                             channels.push(channelID);
                             console.log("SET", channels);
                             return [...channels];

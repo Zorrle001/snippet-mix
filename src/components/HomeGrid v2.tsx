@@ -14,6 +14,8 @@ import { removeItemOnce, splitArrayIntoChunks } from "@/utils/Utils";
 import { Fragment, useState } from "react";
 import TextInsert from "./UI/TextInsert";
 
+import { v4 as uuidv4 } from "uuid";
+
 type Props = {
     snippetCards: React.JSX.Element[];
     pages: PageObjType[];
@@ -226,7 +228,7 @@ export default function HomeGrid_v2({
                         setPages(() => [...pages]);
                         setSelected(null);
                     }}
-                    key={crypto.randomUUID()}
+                    key={uuidv4()}
                 />
             ));
         }

@@ -261,8 +261,8 @@ export default function InputTab({ snippets, snippetObj }: Props) {
                                 snippetObj.snippetOutputChannels[
                                     activeOutputChannel
                                 ];
-                            outputChannelObj.fader = {
-                                enabled: outputChannelObj.fader.enabled,
+                            outputChannelObj.bus.fader = {
+                                enabled: outputChannelObj.bus.fader.enabled,
                                 value,
                             };
                             console.log(outputChannelObj);
