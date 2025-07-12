@@ -7,7 +7,7 @@ import {
 } from "@/hooks/usePagesStore";
 import styles from "@/styles/HomeGridStyles_v2.module.scss";
 import { cn } from "@/utils/Utils";
-import { Dispatch, SetStateAction, useRef } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 
 type Props = {
     pages: PageObjType[];
@@ -39,6 +39,13 @@ export default function TextInsert({
             inputRef.current.blur();
         }
     });
+
+    useEffect(() => {
+        if (selected) {
+            inputRef.current?.focus();
+            console.log("ATTACHED FOCUS");
+        }
+    }, []);
 
     return (
         <section
@@ -80,6 +87,7 @@ export default function TextInsert({
                     textInsert.text = e.target.value;
                     setPages(() => [...pages]);
                 }}
+                spellCheck="false"
             />
             <button
                 onClick={() => {
