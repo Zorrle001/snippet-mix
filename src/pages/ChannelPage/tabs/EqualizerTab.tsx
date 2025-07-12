@@ -154,6 +154,7 @@ const EqualizerTab: React.FC = () => {
                             if (isTouchEvent) return;
 
                             console.log("mouseDown", filterID);
+                            //@ts-ignore
                             onlyMouseDown(e, filter);
                         }}
                     >
@@ -437,6 +438,7 @@ const EqualizerTab: React.FC = () => {
             }}
             onTouchEnd={(e) => {
                 console.log("touchStop Section");
+                // @ts-ignore
                 mouseUp(e);
             }}
         >

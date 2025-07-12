@@ -34,7 +34,9 @@ export default function OutputFader({
     /*const [value, setValue] = useState(
         channelObj.fader.value ? channelObj.fader.value : 0
     );*/
-    let value = outputChannelObj.fader.value ? outputChannelObj.fader.value : 0;
+    let value = outputChannelObj.bus.fader.value
+        ? outputChannelObj.bus.fader.value
+        : 0;
     const [moving, setMoving] = useState(false);
 
     const trackRef = useRef<HTMLDivElement | null>(null);
@@ -76,18 +78,18 @@ export default function OutputFader({
             <section
                 id={styles.buttonSection}
                 className={
-                    outputChannelObj.muted.enabled ? "" : styles.disabled
+                    outputChannelObj.bus.muted.enabled ? "" : styles.disabled
                 }
             >
                 <button
                     id={styles.mutePropertySelBtn}
                     onClick={() => {
-                        outputChannelObj.muted.enabled =
-                            !outputChannelObj.muted.enabled;
+                        outputChannelObj.bus.muted.enabled =
+                            !outputChannelObj.bus.muted.enabled;
                         onOutputChannelObjUpdate();
                     }}
                 >
-                    {outputChannelObj.muted.enabled ? (
+                    {outputChannelObj.bus.muted.enabled ? (
                         <i className="fa-regular fa-circle-check"></i>
                     ) : (
                         <i className="fa-regular fa-circle"></i>
@@ -97,11 +99,13 @@ export default function OutputFader({
                     id={styles.onButton}
                     className={cn(
                         FontClassName,
-                        outputChannelObj.muted.value != true ? styles.muted : ""
+                        outputChannelObj.bus.muted.value != true
+                            ? styles.muted
+                            : ""
                     )}
                     onClick={() => {
-                        outputChannelObj.muted.value =
-                            !outputChannelObj.muted.value;
+                        outputChannelObj.bus.muted.value =
+                            !outputChannelObj.bus.muted.value;
                         onOutputChannelObjUpdate();
                     }}
                 >
@@ -111,15 +115,17 @@ export default function OutputFader({
             <div id={styles.faderPropertySelBtn}>
                 <button
                     className={
-                        outputChannelObj.fader.enabled ? "" : styles.disabled
+                        outputChannelObj.bus.fader.enabled
+                            ? ""
+                            : styles.disabled
                     }
                     onClick={() => {
-                        outputChannelObj.fader.enabled =
-                            !outputChannelObj.fader.enabled;
+                        outputChannelObj.bus.fader.enabled =
+                            !outputChannelObj.bus.fader.enabled;
                         onOutputChannelObjUpdate();
                     }}
                 >
-                    {outputChannelObj.fader.enabled ? (
+                    {outputChannelObj.bus.fader.enabled ? (
                         <i className="fa-regular fa-circle-check"></i>
                     ) : (
                         <i className="fa-regular fa-circle"></i>
@@ -129,7 +135,7 @@ export default function OutputFader({
             <section
                 id={styles.sliderSection}
                 className={
-                    outputChannelObj.fader.enabled ? "" : styles.disabled
+                    outputChannelObj.bus.fader.enabled ? "" : styles.disabled
                 }
             >
                 <div
@@ -215,9 +221,9 @@ export default function OutputFader({
             <section
                 id={styles.channelCardSection}
                 className={
-                    !outputChannelObj.muted.enabled &&
+                    !outputChannelObj.bus.muted.enabled &&
                     !false &&
-                    !outputChannelObj.fader.enabled
+                    !outputChannelObj.bus.fader.enabled
                         ? styles.disabled
                         : ""
                 }

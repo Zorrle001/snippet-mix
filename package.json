@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "next dev --turbo",
+        "dev": "next dev --turbo -H 0.0.0.0",
         "dev-https": "next dev --turbo --experimental-https",
         "build": "next build",
         "start": "next start",
@@ -19,6 +19,7 @@
         "react-dom": "^18",
         "react-use-websocket": "^4.8.1",
         "recharts": "^2.13.3",
+        "uuid": "^11.1.0",
         "zustand": "^4.5.5"
     },
     "devDependencies": {

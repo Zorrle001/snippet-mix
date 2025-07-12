@@ -209,13 +209,15 @@ export type SnippetObjChannelObjType = {
 };
 
 export type SnippetObjOutputChannelObjType = {
-    fader: {
-        enabled: boolean;
-        value: number | null;
-    };
-    muted: {
-        enabled: boolean;
-        value: boolean | null;
+    bus: {
+        fader: {
+            enabled: boolean;
+            value: number | null;
+        };
+        muted: {
+            enabled: boolean;
+            value: boolean | null;
+        };
     };
     channels: SnippetObjChannelListType;
 };
@@ -278,13 +280,15 @@ export default function CreateSnippetPopUp({}: Props) {
                     } as SnippetObjChannelObjType;
                 }
                 newSnippet.snippetOutputChannels[OutputChannelEnum.LR] = {
-                    fader: {
-                        enabled: false,
-                        value: 0,
-                    },
-                    muted: {
-                        enabled: false,
-                        value: false,
+                    bus: {
+                        fader: {
+                            enabled: false,
+                            value: 0,
+                        },
+                        muted: {
+                            enabled: false,
+                            value: false,
+                        },
                     },
                     channels: channels,
                 };

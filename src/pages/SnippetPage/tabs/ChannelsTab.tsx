@@ -275,13 +275,15 @@ export default function ChannelsTab({ snippets, snippetObj }: Props) {
             }
 
             selectedOutputChannels[outputChannelEnum] = {
-                fader: {
-                    enabled: false,
-                    value: null,
-                },
-                muted: {
-                    enabled: false,
-                    value: null,
+                bus: {
+                    fader: {
+                        enabled: false,
+                        value: null,
+                    },
+                    muted: {
+                        enabled: false,
+                        value: null,
+                    },
                 },
                 channels: channels,
             } as SnippetObjOutputChannelObjType;

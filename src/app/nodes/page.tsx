@@ -51,15 +51,15 @@ export default function NodesPage({}: Props) {
                 </li>
                 <li>
                     <div id={styles.leftPart}>
-                        <h2>WLAN Node</h2>
-                        <p>192.168.178.68:8080</p>
+                        <h2>Labby Node</h2>
+                        <p>192.168.188.112:8080</p>
                     </div>
                     <div id={styles.rightPart}>
                         <Link
                             href="/"
                             className={FontClassName}
                             onClick={() => {
-                                setNodeURL("192.168.178.68:8080");
+                                setNodeURL("192.168.188.112:8080");
                             }}
                         >
                             <i className="fa-solid fa-link"></i>
