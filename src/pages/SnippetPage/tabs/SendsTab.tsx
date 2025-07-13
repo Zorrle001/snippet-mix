@@ -26,7 +26,7 @@ let lastOutputDisplayColor = getOutputChannelColor(OutputChannelEnum.MIX1);
 
 let llaoc: null | OutputChannelEnum = null;
 
-export default function InputTab({ snippets, snippetObj }: Props) {
+export default function SendsTab({ snippets, snippetObj }: Props) {
     const setSnippets = useSnippetStore((state) => state.setSnippets);
     const setActiveOutputChannel_GLOBAL = useInputTabStore(
         (state) => state.setActiveOutputChannel
@@ -110,7 +110,7 @@ export default function InputTab({ snippets, snippetObj }: Props) {
     const faders = [];
     for (const channelID of snippetObj.snippetChannels) {
         const channelObj =
-            snippetObj.snippetOutputChannels[activeOutputChannel].channels[
+            snippetObj.snippetOutputChannels[activeOutputChannel].sends[
                 channelID
             ];
 
@@ -287,7 +287,7 @@ export default function InputTab({ snippets, snippetObj }: Props) {
     );
 }
 
-export function InputTabShortcutButtons({ snippets, snippetObj }: Props) {
+export function SendsTabShortcutButtons({ snippets, snippetObj }: Props) {
     const setSnippets = useSnippetStore((state) => state.setSnippets);
 
     const activeOutputChannel = useInputTabStore(
@@ -329,7 +329,7 @@ export function InputTabShortcutButtons({ snippets, snippetObj }: Props) {
 
         for (const channelID of snippetObj.snippetChannels) {
             const channelObj =
-                snippetObj.snippetOutputChannels[activeOutputChannel].channels[
+                snippetObj.snippetOutputChannels[activeOutputChannel].sends[
                     channelID
                 ];
 
@@ -337,12 +337,12 @@ export function InputTabShortcutButtons({ snippets, snippetObj }: Props) {
             if (channelObj.fader.enabled == true) {
                 enabledFaderChannels++;
             }
-            if (channelObj.muted.enabled == true) {
+            if (channelObj.state.enabled == true) {
                 enabledMuteChannels++;
             }
-            if (channelObj.gain.enabled == true) {
+            /* if (channelObj.gain.enabled == true) {
                 enabledGainChannels++;
-            }
+            } */
         }
 
         const allFaderPropertiesEnabled =
@@ -369,7 +369,7 @@ export function InputTabShortcutButtons({ snippets, snippetObj }: Props) {
                             const channelObj =
                                 snippetObj.snippetOutputChannels[
                                     activeOutputChannel
-                                ].channels[channelID];
+                                ].sends[channelID];
 
                             if (!allFaderPropertiesEnabled) {
                                 channelObj.fader.enabled = true;
@@ -396,12 +396,12 @@ export function InputTabShortcutButtons({ snippets, snippetObj }: Props) {
                             const channelObj =
                                 snippetObj.snippetOutputChannels[
                                     activeOutputChannel
-                                ].channels[channelID];
+                                ].sends[channelID];
 
                             if (!allMutePropertiesEnabled) {
-                                channelObj.muted.enabled = true;
+                                channelObj.state.enabled = true;
                             } else {
-                                channelObj.muted.enabled = false;
+                                channelObj.state.enabled = false;
                             }
                         }
 
@@ -423,13 +423,13 @@ export function InputTabShortcutButtons({ snippets, snippetObj }: Props) {
                             const channelObj =
                                 snippetObj.snippetOutputChannels[
                                     activeOutputChannel
-                                ].channels[channelID];
+                                ].sends[channelID];
 
-                            if (!allGainPropertiesEnabled) {
+                            /* if (!allGainPropertiesEnabled) {
                                 channelObj.gain.enabled = true;
                             } else {
                                 channelObj.gain.enabled = false;
-                            }
+                            } */
                         }
 
                         return [...snippets];

@@ -10,13 +10,13 @@ import homeStyles from "@/styles/HomeStyles.module.scss";
 import styles from "@/styles/SnippetPageStyle.module.scss";
 import ChannelsTab from "./tabs/ChannelsTab";
 import DesignTab from "./tabs/DesignTab";
-import InputTab, { InputTabShortcutButtons } from "./tabs/InputTab";
 import OutputTab, { OutputTabShortcutButtons } from "./tabs/OutputTab";
+import SendsTab, { SendsTabShortcutButtons } from "./tabs/SendsTab";
 
 type Props = {};
 
 export enum SnippetPageTabs {
-    Inputs,
+    Sends,
     Outputs,
     Channels,
     Fade,
@@ -80,8 +80,8 @@ export default function SnippetPage({}: Props) {
                         Online
                     </button>
                 </section>
-                {tab == SnippetPageTabs.Inputs ? (
-                    <InputTabShortcutButtons
+                {tab == SnippetPageTabs.Sends ? (
+                    <SendsTabShortcutButtons
                         snippets={snippets}
                         snippetObj={snippetObj}
                     />
@@ -103,8 +103,8 @@ export default function SnippetPage({}: Props) {
                     </button>
                 </section>
             </nav>
-            {tab == SnippetPageTabs.Inputs ? (
-                <InputTab snippets={snippets} snippetObj={snippetObj} />
+            {tab == SnippetPageTabs.Sends ? (
+                <SendsTab snippets={snippets} snippetObj={snippetObj} />
             ) : tab == SnippetPageTabs.Outputs ? (
                 <OutputTab snippets={snippets} snippetObj={snippetObj} />
             ) : tab == SnippetPageTabs.Channels ? (
@@ -134,11 +134,11 @@ export default function SnippetPage({}: Props) {
                 <section id={styles.tabSection}>
                     <div
                         className={
-                            tab == SnippetPageTabs.Inputs ? styles.active : ""
+                            tab == SnippetPageTabs.Sends ? styles.active : ""
                         }
-                        onClick={() => setTab(SnippetPageTabs.Inputs)}
+                        onClick={() => setTab(SnippetPageTabs.Sends)}
                     >
-                        Inputs
+                        Sends
                     </div>
                     <div
                         className={

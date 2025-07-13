@@ -15,6 +15,6 @@ export const useSnippetPageStore = create<SnippetPageStoreType>((set, get) => ({
         set({ selectedSnippet: snippetID });
     },
     isPageVisible: () => get().selectedSnippet !== null,
-    tab: SnippetPageTabs.Inputs,
+    tab: SnippetPageTabs.Sends,
     setTab: (tab) => set({ tab }),
 }));

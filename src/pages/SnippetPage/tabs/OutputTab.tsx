@@ -108,7 +108,7 @@ export function OutputTabShortcutButtons({ snippets, snippetObj }: Props) {
             if (outputChannelObj.bus.fader.enabled == true) {
                 enabledFaderChannels++;
             }
-            if (outputChannelObj.bus.muted.enabled == true) {
+            if (outputChannelObj.bus.state.enabled == true) {
                 enabledMuteChannels++;
             }
         }
@@ -165,9 +165,9 @@ export function OutputTabShortcutButtons({ snippets, snippetObj }: Props) {
                                 ];
 
                             if (!allMutePropertiesEnabled) {
-                                outputChannelObj.bus.muted.enabled = true;
+                                outputChannelObj.bus.state.enabled = true;
                             } else {
-                                outputChannelObj.bus.muted.enabled = false;
+                                outputChannelObj.bus.state.enabled = false;
                             }
                         }
 

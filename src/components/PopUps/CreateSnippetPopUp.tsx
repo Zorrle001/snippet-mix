@@ -18,7 +18,7 @@ export type SnippetObjType = {
     snippetOutputChannels: SnippetObjOutputChannelListType;
 };
 
-export type SnippetObjChannelListType = {
+export type SnippetObjSendsListType = {
     [key: string]: SnippetObjChannelObjType;
 };
 
@@ -194,15 +194,11 @@ export type SnippetObjOutputChannelListType = {
 };
 
 export type SnippetObjChannelObjType = {
-    fader: {
-        enabled: boolean;
-        value: number | null;
-    };
-    muted: {
+    state: {
         enabled: boolean;
         value: boolean | null;
     };
-    gain: {
+    fader: {
         enabled: boolean;
         value: number | null;
     };
@@ -210,16 +206,16 @@ export type SnippetObjChannelObjType = {
 
 export type SnippetObjOutputChannelObjType = {
     bus: {
+        state: {
+            enabled: boolean;
+            value: boolean | null;
+        };
         fader: {
             enabled: boolean;
             value: number | null;
         };
-        muted: {
-            enabled: boolean;
-            value: boolean | null;
-        };
     };
-    channels: SnippetObjChannelListType;
+    sends: SnippetObjSendsListType;
 };
 
 export default function CreateSnippetPopUp({}: Props) {
@@ -254,53 +250,77 @@ export default function CreateSnippetPopUp({}: Props) {
     ) : (
         <SnippetInputPopUp
             {...snippetObject}
-            onConfirm={(snippetChannels) => {
-                const newSnippet = {
-                    ...snippetObject,
-                    snippetChannels,
-                    snippetOutputChannels:
-                        {} as SnippetObjOutputChannelListType,
-                };
-
-                const channels = {} as SnippetObjChannelListType;
-                for (const selectedChannel of snippetChannels) {
-                    channels[selectedChannel] = {
-                        fader: {
-                            enabled: false,
-                            value: null,
-                        },
-                        muted: {
-                            enabled: false,
-                            value: null,
-                        },
-                        gain: {
-                            enabled: false,
-                            value: null,
-                        },
-                    } as SnippetObjChannelObjType;
-                }
-                newSnippet.snippetOutputChannels[OutputChannelEnum.LR] = {
-                    bus: {
-                        fader: {
-                            enabled: false,
-                            value: 0,
-                        },
-                        muted: {
-                            enabled: false,
-                            value: false,
-                        },
-                    },
-                    channels: channels,
-                };
-
-                setSnippets((snippets) => [...snippets, newSnippet]);
-                setSnippetObject(newSnippet);
-                setOpenedPopUp(null);
-            }}
+            onConfirm={CREATE_SNIPPET}
             onCancel={(snippetChannels) => {
                 setSnippetObject({ ...snippetObject, snippetChannels });
                 setPage(0);
             }}
         />
     );
+
+    function CREATE_SNIPPET(snippetChannels: string[]) {
+        const sortedChannels = snippetChannels.sort((a, b) => {
+            // Extrahiere die Zahl nach "ch" aus jedem String und konvertiere sie in eine Zahl
+            const numA = parseInt(a.replace("ch", ""));
+            const numB = parseInt(b.replace("ch", ""));
+
+            // Vergleiche die extrahierten Zahlen
+            return numA - numB;
+        });
+
+        const newSnippetObj = {
+            ...snippetObject,
+            snippetChannels: sortedChannels,
+            snippetOutputChannels: {} as SnippetObjOutputChannelListType,
+        };
+
+        // LOAD DATA FROM MIXER!
+        // @ts-ignore
+        if (window.sendJSONMessage === undefined) {
+            alert("WS not connected! Can't load Mixer Data");
+            return;
+        }
+
+        // @ts-ignore
+        window.sendJSONMessage({
+            id: "FILL_SNIPPET_OBJECT",
+            data: {
+                emptySnippetObj: newSnippetObj,
+            },
+        });
+        console.log("REQUESTED SNIPPET FILL");
+        setOpenedPopUp(null);
+        return;
+
+        const channels = {} as SnippetObjSendsListType;
+        for (const selectedChannel of sortedChannels) {
+            channels[selectedChannel] = {
+                state: {
+                    enabled: false,
+                    value: null,
+                },
+                fader: {
+                    enabled: false,
+                    value: null,
+                },
+            } as SnippetObjChannelObjType;
+        }
+        newSnippetObj.snippetOutputChannels[OutputChannelEnum.LR] = {
+            bus: {
+                fader: {
+                    enabled: false,
+                    value: 0,
+                },
+                state: {
+                    enabled: false,
+                    value: false,
+                },
+            },
+            sends: channels,
+        };
+
+        setSnippets((snippets) => [...snippets, newSnippetObj]);
+        setSnippetObject(newSnippetObj);
+        setOpenedPopUp(null);
+    }
 }

@@ -5,9 +5,9 @@ import {
     getMIXOutputChannelEnum,
     getMTXOutputChannelEnum,
     OutputChannelEnum,
-    SnippetObjChannelListType,
     SnippetObjChannelObjType,
     SnippetObjOutputChannelObjType,
+    SnippetObjSendsListType,
     SnippetObjType,
 } from "@/components/PopUps/CreateSnippetPopUp";
 import SnippetCard from "@/components/SnippetCard";
@@ -51,7 +51,7 @@ export default function ChannelsTab({ snippets, snippetObj }: Props) {
                                 const channels =
                                     snippetObj.snippetOutputChannels[
                                         outputChannels
-                                    ].channels;
+                                    ].sends;
 
                                 delete channels[channelID];
                             }
@@ -62,18 +62,14 @@ export default function ChannelsTab({ snippets, snippetObj }: Props) {
                                 const channels =
                                     snippetObj.snippetOutputChannels[
                                         outputChannels
-                                    ].channels;
+                                    ].sends;
 
                                 channels[channelID] = {
+                                    state: {
+                                        enabled: false,
+                                        value: null,
+                                    },
                                     fader: {
-                                        enabled: false,
-                                        value: null,
-                                    },
-                                    muted: {
-                                        enabled: false,
-                                        value: null,
-                                    },
-                                    gain: {
                                         enabled: false,
                                         value: null,
                                     },
@@ -255,19 +251,15 @@ export default function ChannelsTab({ snippets, snippetObj }: Props) {
             delete selectedOutputChannels[outputChannelEnum];
             setSnippets(() => [...snippets]);
         } else {
-            let channels: SnippetObjChannelListType = {};
+            let channels: SnippetObjSendsListType = {};
 
             for (const selectedChannel of selectedChannels) {
                 channels[selectedChannel] = {
+                    state: {
+                        enabled: false,
+                        value: null,
+                    },
                     fader: {
-                        enabled: false,
-                        value: null,
-                    },
-                    muted: {
-                        enabled: false,
-                        value: null,
-                    },
-                    gain: {
                         enabled: false,
                         value: null,
                     },
@@ -280,12 +272,12 @@ export default function ChannelsTab({ snippets, snippetObj }: Props) {
                         enabled: false,
                         value: null,
                     },
-                    muted: {
+                    state: {
                         enabled: false,
                         value: null,
                     },
                 },
-                channels: channels,
+                sends: channels,
             } as SnippetObjOutputChannelObjType;
 
             setSnippets(() => [...snippets]);

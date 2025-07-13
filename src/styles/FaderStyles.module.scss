@@ -343,9 +343,9 @@
                 position: relative;
                 width: max-content;
                 height: 100%;
-                display: flex;
+                /* display: flex;
                 flex-direction: column;
-                align-items: left;
+                align-items: left; */
                 //justify-content: space-between;
 
                 color: #aaaaaa;
@@ -355,6 +355,7 @@
                 list-style: none;
 
                 > li {
+                    position: absolute;
                     height: 0px;
 
                     display: flex;

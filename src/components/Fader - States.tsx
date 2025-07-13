@@ -15,7 +15,7 @@ type Props = {
     sendsActiveStartingStyle?: boolean;
 };
 
-export default function Fader({
+export default function Fader_STATES({
     channelID,
     channelObj,
     onChange,
@@ -70,20 +70,24 @@ export default function Fader({
         >
             <section
                 id={styles.propertySection}
-                className={channelObj.gain.enabled ? "" : styles.disabled}
+                className={
+                    /* channelObj.gain.enabled */ false ? "" : styles.disabled
+                }
             >
                 <button
                     id={styles.propertySelBtn}
                     onClick={() => {
-                        channelObj.gain.enabled = !channelObj.gain.enabled;
-                        onChannelObjUpdate();
+                        /* channelObj.gain.enabled = !channelObj.gain.enabled;
+                        onChannelObjUpdate(); */
                     }}
                 >
-                    {channelObj.gain.enabled ? (
-                        <i className="fa-regular fa-circle-check"></i>
-                    ) : (
-                        <i className="fa-regular fa-circle"></i>
-                    )}
+                    {
+                        /* channelObj.gain.enabled */ false ? (
+                            <i className="fa-regular fa-circle-check"></i>
+                        ) : (
+                            <i className="fa-regular fa-circle"></i>
+                        )
+                    }
                 </button>
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -110,16 +114,16 @@ export default function Fader({
             </section>
             <section
                 id={styles.buttonSection}
-                className={channelObj.muted.enabled ? "" : styles.disabled}
+                className={channelObj.state.enabled ? "" : styles.disabled}
             >
                 <button
                     id={styles.mutePropertySelBtn}
                     onClick={() => {
-                        channelObj.muted.enabled = !channelObj.muted.enabled;
+                        channelObj.state.enabled = !channelObj.state.enabled;
                         onChannelObjUpdate();
                     }}
                 >
-                    {channelObj.muted.enabled ? (
+                    {channelObj.state.enabled ? (
                         <i className="fa-regular fa-circle-check"></i>
                     ) : (
                         <i className="fa-regular fa-circle"></i>
@@ -129,10 +133,10 @@ export default function Fader({
                     id={styles.onButton}
                     className={cn(
                         FontClassName,
-                        channelObj.muted.value != true ? styles.muted : ""
+                        channelObj.state.value != true ? styles.muted : ""
                     )}
                     onClick={() => {
-                        channelObj.muted.value = !channelObj.muted.value;
+                        channelObj.state.value = !channelObj.state.value;
                         onChannelObjUpdate();
                     }}
                 >
@@ -224,14 +228,14 @@ export default function Fader({
                     </ul>
                 </div>
                 <p id={styles.sliderValue} ref={sliderValueRef}>
-                    {(value * 100).toFixed(2)}%
+                    {(value * 100).toFixed(2)}db
                 </p>
             </section>
             <section
                 id={styles.channelCardSection}
                 className={
-                    !channelObj.muted.enabled &&
-                    !channelObj.gain.enabled &&
+                    !channelObj.state.enabled &&
+                    /* !channelObj.gain.enabled && */
                     !channelObj.fader.enabled
                         ? styles.disabled
                         : ""

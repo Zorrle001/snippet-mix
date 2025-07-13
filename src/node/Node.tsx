@@ -12,6 +12,7 @@ import NodeEffect from "./NodeEffect";
 export type NodeMessage = {
     id: string;
     data: any;
+    error?: string;
 };
 
 //var serverSnippets: any = [];
@@ -52,10 +53,16 @@ export default function Node({}) {
             // MOVED TO Connect Message
             /*setConnected(true);
             setLoading(false);*/
+
+            // @ts-ignore
+            window.sendJSONMessage = sendJsonMessage;
         },
         onClose: () => {
             setConnected(false);
             setLoading(false);
+
+            // @ts-ignore
+            window.sendJSONMessage = undefined;
         },
         onError: (e) => {
             console.error(e);
@@ -96,6 +103,19 @@ export default function Node({}) {
             //setServerSnippets(data);
             setNodePages(data);
             setPages(() => structuredClone(data));
+        } else if (id === "FILL_SNIPPET_OBJECT_RES") {
+            //setServerSnippets(data);
+            if (message.error !== undefined) {
+                window.alert(
+                    "ERROR in backend on Creating Snippet Object: " +
+                        message.error
+                );
+                return;
+            }
+
+            setSnippets((prevSnippets) => [...prevSnippets, data]);
+
+            alert("Snippet " + data.snippetName + " successfully created");
         } else {
             console.error("MessageID is invalid");
         }
