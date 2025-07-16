@@ -57,7 +57,7 @@ export type PageObjRowDataType = {
 
 export const fallbackPage = {
     name: "Page",
-    collumns: 5,
+    collumns: 4,
     rows: 3,
     data: {},
 };
