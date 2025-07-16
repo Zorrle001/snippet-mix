@@ -11,7 +11,7 @@ import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 
 type Props = {
     pages: PageObjType[];
-    editMode: boolean;
+    gridMode: boolean;
     textInsert: PageObjRowDataTextType;
     selected: null | PageObjRowDataTextType;
     setSelected: Dispatch<SetStateAction<PageObjRowDataTextType | null>>;
@@ -19,7 +19,7 @@ type Props = {
 };
 export default function TextInsert({
     pages,
-    editMode,
+    gridMode,
     textInsert,
     selected,
     setSelected,
@@ -53,7 +53,7 @@ export default function TextInsert({
             ref={textInsertRef}
             className={cn(
                 styles[textInsert.type],
-                editMode ? styles.editMode : "",
+                gridMode ? styles.editMode : "",
                 selected == textInsert ? styles.selected : ""
             )}
             onMouseDown={() => {
@@ -81,7 +81,7 @@ export default function TextInsert({
             <input
                 id={styles.textInsertInput}
                 ref={inputRef}
-                contentEditable={editMode}
+                contentEditable={gridMode}
                 value={textInsert.text}
                 onChange={(e) => {
                     textInsert.text = e.target.value;

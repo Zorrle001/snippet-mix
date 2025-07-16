@@ -20,12 +20,14 @@ type Props = {
     snippetCards: React.JSX.Element[];
     pages: PageObjType[];
     activePage: number;
+    gridMode: boolean;
     editMode: boolean;
 };
 export default function HomeGrid_v2({
     snippetCards,
     pages,
     activePage,
+    gridMode,
     editMode,
 }: Props) {
     /*const legacy_collumns = usePagesStore((state) => state.legacy_collumns);
@@ -79,8 +81,8 @@ export default function HomeGrid_v2({
             if (rowData != undefined) {
                 if (rowData.type == CardEnum.SNIPPET) {
                     const snippetID = rowData.id;
-                    fieldContent = snippetCards[snippetID]
-                        ? snippetCards[snippetID]
+                    fieldContent = snippetCards[snippetID - 1]
+                        ? snippetCards[snippetID - 1]
                         : null;
                     //fieldContent = snippetCards[i] ? snippetCards[i] : null;
                 }
@@ -91,7 +93,7 @@ export default function HomeGrid_v2({
                     key={`field-${row}-${collumn}`}
                     id={styles.homeGridField}
                     onClick={() => {
-                        if (!editMode) return;
+                        if (!gridMode) return;
                         setOpenedPopUpProps({
                             onConfirm(rowData: PageObjRowDataType) {
                                 if (!pageObj.data[row]) {
@@ -105,7 +107,7 @@ export default function HomeGrid_v2({
                                 setPages(() => [...pages]);
                             },
                             onClear() {
-                                // EMPTY ROWS NOT BEEING DELETET
+                                // TODO: FIX EMPTY ROWS NOT BEEING DELETET
                                 if (pageObj.data[row]) {
                                     // @ts-ignore
                                     pageObj.data[row][collumn] = undefined;
@@ -115,7 +117,10 @@ export default function HomeGrid_v2({
                         });
                         setOpenedPopUp(PopUps.SelectSnippetPopUp);
                     }}
-                    className={editMode ? styles.editMode : ""}
+                    className={[
+                        gridMode ? styles.gridMode : "",
+                        editMode ? styles.editMode : "",
+                    ].join(" ")}
                 >
                     {fieldContent}
                 </div>
@@ -216,7 +221,7 @@ export default function HomeGrid_v2({
             textInsertElements = rowData.textInserts.map((textInsert) => (
                 <TextInsert
                     pages={pages}
-                    editMode={editMode}
+                    gridMode={gridMode}
                     textInsert={textInsert}
                     selected={selected}
                     setSelected={setSelected}
@@ -248,7 +253,7 @@ export default function HomeGrid_v2({
                     </section>
                 ) : null}
                 <section id={styles.gridRow}>
-                    {editMode ? (
+                    {gridMode ? (
                         <div
                             key={`textInsert-${i}`}
                             onClick={() => {

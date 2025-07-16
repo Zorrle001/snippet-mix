@@ -50,7 +50,7 @@
 
             container: textInsertContainer / size;
 
-            &:not(.editMode) {
+            &:not(.gridMode) {
                 cursor: normal;
                 pointer-events: none;
 
@@ -137,8 +137,8 @@
                 }
             }
 
-            //&.editMode:has(#textInsertInput:focus-visible)
-            &.editMode.selected {
+            //&.gridMode:has(#textInsertInput:focus-visible)
+            &.gridMode.selected {
                 outline: 2px solid #3838e0;
                 border-radius: 0.25rem;
 
@@ -191,10 +191,10 @@
                 border: 0px solid black;
             }
 
-            &.editMode:not(:has(article)) {
+            &.gridMode:not(:has(article)) {
                 border: 1px solid #007644;
 
-                &.editMode {
+                &.gridMode {
                     cursor: pointer;
                     transition: background-color 0.15s linear;
                     //border: 0px solid black;
@@ -203,6 +203,10 @@
                         background-color: lighten(black, 10%);
                     }
                 }
+            }
+
+            &.editMode:has(article) {
+                outline: 2px solid red;
             }
         }
 

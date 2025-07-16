@@ -12,6 +12,8 @@ export type PagesStoreType = {
     setActivePage: (pageIndex: number) => void;
     editMode: boolean;
     setEditMode: (callback: (state: boolean) => boolean) => void;
+    gridMode: boolean;
+    setGridMode: (callback: (state: boolean) => boolean) => void;
 };
 
 export type PageObjType = {
@@ -86,5 +88,12 @@ export const usePagesStore = create<PagesStoreType>((set, get) => ({
     activePage: 0,
     setActivePage: (page) => set({ activePage: page }),
     editMode: false,
-    setEditMode: (callback) => set({ editMode: callback(get().editMode) }),
+    setEditMode: (callback) =>
+        set({
+            editMode: callback(get().editMode),
+            gridMode: false,
+        }),
+    gridMode: false,
+    setGridMode: (callback) =>
+        set({ gridMode: callback(get().gridMode), editMode: false }),
 }));

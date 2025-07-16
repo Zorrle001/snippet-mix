@@ -52,7 +52,7 @@ export default function SelectSnippetPopUp({
                 onClick={() => {
                     onConfirm({
                         type: CardEnum.SNIPPET,
-                        id: snippetObj.snippetID - 1,
+                        id: snippetObj.snippetID,
                     });
                     setOpenedPopUp(null);
                 }}

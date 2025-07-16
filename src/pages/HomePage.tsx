@@ -23,6 +23,9 @@ export default function HomePage({}: Props) {
     const setEditMode = usePagesStore((state) => state.setEditMode);
     const editMode = usePagesStore((state) => state.editMode);
 
+    const setGridMode = usePagesStore((state) => state.setGridMode);
+    const gridMode = usePagesStore((state) => state.gridMode);
+
     //const collumns = usePagesStore((state) => state.legacy_collumns);
     //const rows = usePagesStore((state) => state.legacy_rows);
     //const setCollumns = usePagesStore((state) => state.set_legacy_Collumns);
@@ -66,7 +69,29 @@ export default function HomePage({}: Props) {
             faderIndicator={false}
             gainIndicator={false}
             onClick={() => {
-                if (!editMode) setSelectedSnippet(snippetObj.snippetID);
+                if (!gridMode && editMode) {
+                    // OPEN EDIT PAGE
+                    setSelectedSnippet(snippetObj.snippetID);
+                }
+                if (!gridMode && !editMode) {
+                    // LOAD SNIPPET
+                    //@ts-ignore
+                    if (window.sendJSONMessage === undefined) {
+                        alert("WS not connected! Can't load Snippets");
+                        return;
+                    }
+
+                    // @ts-ignore
+                    window.sendJSONMessage(
+                        JSON.stringify({
+                            id: "LOAD_SNIPPET_OBJ",
+                            data: {
+                                snippetObj,
+                            },
+                        })
+                    );
+                    console.log("MSG SENT");
+                }
             }}
         ></SnippetCard>
     ));
@@ -101,6 +126,14 @@ export default function HomePage({}: Props) {
                         <i className="fa-solid fa-i-cursor"></i>
                     </button>
                     <button
+                        id={gridMode ? undefined : styles.deleteBtn}
+                        onClick={() => {
+                            setGridMode((state) => !state);
+                        }}
+                    >
+                        <i className="fa-solid fa-grip"></i>
+                    </button>
+                    <button
                         id={editMode ? undefined : styles.deleteBtn}
                         onClick={() => {
                             setEditMode((state) => !state);
@@ -108,6 +141,7 @@ export default function HomePage({}: Props) {
                     >
                         <i className="fa-solid fa-pencil"></i>
                     </button>
+
                     <button
                         id={styles.deleteBtn}
                         onClick={() => {
@@ -172,6 +206,7 @@ export default function HomePage({}: Props) {
                 snippetCards={snippetCards}
                 pages={pages}
                 activePage={activePage}
+                gridMode={gridMode}
                 editMode={editMode}
             />
             <button
