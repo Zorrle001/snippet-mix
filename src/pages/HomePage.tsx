@@ -82,14 +82,12 @@ export default function HomePage({}: Props) {
                     }
 
                     // @ts-ignore
-                    window.sendJSONMessage(
-                        JSON.stringify({
-                            id: "LOAD_SNIPPET_OBJ",
-                            data: {
-                                snippetObj,
-                            },
-                        })
-                    );
+                    window.sendJSONMessage({
+                        id: "LOAD_SNIPPET_OBJ",
+                        data: {
+                            snippetObj,
+                        },
+                    });
                     console.log("MSG SENT");
                 }
             }}

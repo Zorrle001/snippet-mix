@@ -79,7 +79,10 @@ export default function Node({}) {
 
         const message = lastJsonMessage as NodeMessage;
 
-        if (message.id === undefined || message.data === undefined) {
+        if (
+            message.id === undefined ||
+            !(message.data === undefined || message.error === undefined)
+        ) {
             console.error("Message structure is invalid");
             return;
         }

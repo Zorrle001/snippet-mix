@@ -29,15 +29,15 @@ export default function NodesPage({}: Props) {
             <ul id={styles.connectionList}>
                 <li>
                     <div id={styles.leftPart}>
-                        <h2>Ethernet Node</h2>
-                        <p>192.168.178.37:8080</p>
+                        <h2>Schul Node</h2>
+                        <p>192.168.188.112</p>
                     </div>
                     <div id={styles.rightPart}>
                         <Link
                             href="/"
                             className={FontClassName}
                             onClick={() => {
-                                setNodeURL("192.168.178.37:8080");
+                                setNodeURL("192.168.188.112:8080");
                             }}
                         >
                             <i className="fa-solid fa-link"></i>

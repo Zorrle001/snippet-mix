@@ -286,6 +286,7 @@ export default function CreateSnippetPopUp({}: Props) {
             id: "FILL_SNIPPET_OBJECT",
             data: {
                 emptySnippetObj: newSnippetObj,
+                outputChannels: [OutputChannelEnum.LR],
             },
         });
         console.log("REQUESTED SNIPPET FILL");

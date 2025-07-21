@@ -66,6 +66,36 @@ export default function SnippetInputPopUp({
                                     value: null,
                                 },
                             };*/
+
+                            if (channelID === "ch31") {
+                                //return [...channels];
+                                // TODO: REMOVE
+                                return [
+                                    "ch31",
+                                    "ch32",
+                                    "ch33",
+                                    "ch34",
+                                    "ch35",
+                                    "ch36",
+                                    "ch37",
+                                    "ch38",
+                                    "ch39",
+                                    "ch40",
+                                    "ch41",
+                                    "ch42",
+                                    "ch43",
+                                    "ch44",
+                                    "ch45",
+                                    "ch46",
+                                    "ch47",
+                                    "ch48",
+                                    "ch49",
+                                    "ch50",
+                                    "ch51",
+                                    "ch52",
+                                ];
+                            }
+
                             if (channels.includes(channelID)) {
                                 return [...channels];
                             }
