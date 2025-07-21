@@ -2,7 +2,6 @@
 
 import {
     CardEnum,
-    PageObjRowDataTextType,
     PageObjRowDataType,
     PageObjType,
     TextTypeEnum,
@@ -13,8 +12,6 @@ import styles from "@/styles/HomeGridStyles_v2.module.scss";
 import { removeItemOnce, splitArrayIntoChunks } from "@/utils/Utils";
 import { Fragment, useState } from "react";
 import TextInsert from "./UI/TextInsert";
-
-import { v4 as uuidv4 } from "uuid";
 
 type Props = {
     snippetCards: React.JSX.Element[];
@@ -44,9 +41,10 @@ export default function HomeGrid_v2({
 
     const setPages = usePagesStore((state) => state.setPages);
 
-    const [selected, setSelected] = useState<null | PageObjRowDataTextType>(
-        null
-    );
+    const [selected, setSelected] = useState<null | {
+        id: number;
+        row: number;
+    }>(null);
 
     /*useEffect(() => {
         document.addEventListener("mousedown", mouseDown);
@@ -233,7 +231,7 @@ export default function HomeGrid_v2({
                         setPages(() => [...pages]);
                         setSelected(null);
                     }}
-                    key={uuidv4()}
+                    key={`textinsert-${textInsert.id}`}
                 />
             ));
         }
@@ -266,9 +264,19 @@ export default function HomeGrid_v2({
                                         rowData;
                                 }
                                 console.log(rowData, pages);
+
+                                let freeID = 0;
+                                for (const textInsert of rowData.textInserts) {
+                                    if (freeID <= textInsert.id) {
+                                        freeID = textInsert.id + 1;
+                                    }
+                                }
+
                                 rowData.textInserts.push({
                                     type: TextTypeEnum.H1,
-                                    text: "Text 1",
+                                    text: "Text",
+                                    id: freeID,
+                                    row: scopedRowID,
                                 });
 
                                 setPages(() => [...pages]);
@@ -298,6 +306,31 @@ export default function HomeGrid_v2({
             {/* {gridFields} */}
             {gridRowElements}
             {/*  </section> */}
+            {gridMode === true ? (
+                <>
+                    <div
+                        key={"addRowTag"}
+                        className={styles.addRowTag}
+                        onClick={() => {
+                            pageObj.rows++;
+                            setPages(() => [...pages]);
+                        }}
+                    >
+                        <i className="fa-solid fa-arrow-turn-down"></i>
+                    </div>
+                    <div
+                        key={`removeRowTag-${i}`}
+                        className={styles.removeRowTag}
+                        onClick={() => {
+                            pageObj.rows--;
+                            setPages(() => [...pages]);
+                            //set_pageObj.rows(pageObj.rows - 1);
+                        }}
+                    >
+                        <i className="fa-solid fa-ban"></i>
+                    </div>
+                </>
+            ) : null}
         </article>
     );
 }

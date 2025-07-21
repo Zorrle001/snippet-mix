@@ -1,17 +1,24 @@
 "use client";
 
-import { MutableRefObject, RefObject, useEffect } from "react";
+import { RefObject, useEffect } from "react";
 import { PageObjRowDataTextType } from "./usePagesStore";
 
 export default function useClickOutside(
     ref: RefObject<HTMLElement>,
     textInsert: PageObjRowDataTextType,
-    selected: PageObjRowDataTextType | null,
+    selected: null | {
+        id: number;
+        row: number;
+    },
     callback: Function
 ) {
     useEffect(() => {
         function handleClickOutside(event: any) {
-            if (selected === textInsert && ref.current) {
+            if (
+                selected?.id === textInsert.id &&
+                selected?.row === textInsert.row &&
+                ref.current
+            ) {
                 if (!ref.current.contains(event.target)) {
                     callback();
                 }

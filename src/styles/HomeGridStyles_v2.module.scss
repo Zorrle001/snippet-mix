@@ -417,4 +417,55 @@
             }
         }
     }
+
+    .addRowTag,
+    .addCollumnTag {
+        position: relative;
+        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 2.5rem;
+        height: 2.5rem;
+        background-color: #505050;
+        padding: 1rem;
+
+        border-radius: 0.4rem;
+
+        margin-top: 1rem;
+        color: white;
+        //padding-bottom: 0px;
+        //padding-left: 0.5rem;
+
+        /* &::after {
+            //border-left-color: #505050;
+        } */
+    }
+
+    .removeRowTag,
+    .removeCollumnTag {
+        position: relative;
+        display: block;
+        width: 2.5rem;
+        height: 2.5rem;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        //padding-left: 0.25rem;
+        //padding-top: 0.1rem;
+        padding: 1rem;
+        border-radius: 0.4rem;
+
+        //margin-left: 0.35rem;
+
+        background-color: rgb(187, 69, 69);
+
+        color: white;
+
+        &::after {
+            display: none;
+        }
+    }
 }

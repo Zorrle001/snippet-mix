@@ -119,6 +119,30 @@ export default function Node({}) {
             setSnippets((prevSnippets) => [...prevSnippets, data]);
 
             alert("Snippet " + data.snippetName + " successfully created");
+        } else if (id === "UPDATE_SNIPPET_OBJECT_RES") {
+            //setServerSnippets(data);
+            if (message.error !== undefined) {
+                window.alert(
+                    "ERROR in backend on Updating Snippet Object: " +
+                        message.error
+                );
+                return;
+            }
+
+            setSnippets((prevSnippets) => {
+                const snp = prevSnippets.find(
+                    (snp) => snp.snippetID === data.snippetID
+                );
+                if (!snp) {
+                    alert("Can't set snippet update. Snippet not Found");
+                    return prevSnippets;
+                }
+
+                snp.snippetOutputChannels = data.snippetOutputChannels;
+
+                alert("Snippet " + data.snippetName + " successfully updated");
+                return [...prevSnippets];
+            });
         } else {
             console.error("MessageID is invalid");
         }

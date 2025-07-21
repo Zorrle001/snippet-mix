@@ -44,6 +44,8 @@
 
         overflow: visible;
 
+        z-index: 15;
+
         &.floating {
             --floating-divider: 1.5;
             aspect-ratio: 4 / calc(3 / var(--floating-divider));

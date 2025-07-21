@@ -43,6 +43,8 @@ export enum TextTypeEnum {
 export type PageObjRowDataTextType = {
     type: TextTypeEnum;
     text: string;
+    id: number;
+    row: number;
 };
 
 export enum CardEnum {

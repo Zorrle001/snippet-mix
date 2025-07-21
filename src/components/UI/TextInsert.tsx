@@ -7,14 +7,22 @@ import {
 } from "@/hooks/usePagesStore";
 import styles from "@/styles/HomeGridStyles_v2.module.scss";
 import { cn } from "@/utils/Utils";
-import { Dispatch, SetStateAction, useEffect, useRef } from "react";
+import { Dispatch, SetStateAction, useMemo, useRef } from "react";
 
 type Props = {
     pages: PageObjType[];
     gridMode: boolean;
     textInsert: PageObjRowDataTextType;
-    selected: null | PageObjRowDataTextType;
-    setSelected: Dispatch<SetStateAction<PageObjRowDataTextType | null>>;
+    selected: null | {
+        id: number;
+        row: number;
+    };
+    setSelected: Dispatch<
+        SetStateAction<null | {
+            id: number;
+            row: number;
+        }>
+    >;
     onDelete: Function;
 };
 export default function TextInsert({
@@ -31,21 +39,51 @@ export default function TextInsert({
     const textInsertRef = useRef<HTMLElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
+    let tempValue = "";
+
     useClickOutside(textInsertRef, textInsert, selected, () => {
         setSelected(null);
         console.log("CLICK OUTSIDE", textInsertRef.current);
 
         if (inputRef.current) {
             inputRef.current.blur();
+            //inputRef.current.setAttribute("readonly", "");
         }
     });
 
-    useEffect(() => {
-        if (selected) {
+    /* useEffect(() => {
+        if (selected === textInsert.id) {
+            //inputRef.current?.removeAttribute("readonly");
+            //inputRef.current?.click();
             inputRef.current?.focus();
             console.log("ATTACHED FOCUS");
         }
-    }, []);
+    }, []); */
+
+    const INPUT = useMemo(
+        () => (
+            <input
+                id={styles.textInsertInput}
+                ref={inputRef}
+                contentEditable={gridMode}
+                value={textInsert.text}
+                onChange={(e) => {
+                    textInsert.text = e.target.value;
+                    tempValue = e.target.value;
+                    //inputRef.current.value = tempValue;
+                    setPages(() => [...pages]);
+                }}
+                spellCheck="false"
+                readOnly={
+                    selected?.id === textInsert.id &&
+                    selected?.row === textInsert.row
+                        ? false
+                        : true
+                }
+            />
+        ),
+        [selected, textInsert.text]
+    );
 
     return (
         <section
@@ -53,11 +91,18 @@ export default function TextInsert({
             ref={textInsertRef}
             className={cn(
                 styles[textInsert.type],
-                gridMode ? styles.editMode : "",
-                selected == textInsert ? styles.selected : ""
+                gridMode ? styles.gridMode : "",
+                selected?.id == textInsert.id &&
+                    selected?.row === textInsert.row
+                    ? styles.selected
+                    : ""
             )}
             onMouseDown={() => {
-                setSelected(textInsert);
+                console.log("SELECT");
+                setSelected({
+                    id: textInsert.id,
+                    row: textInsert.row,
+                });
             }}
         >
             <span
@@ -78,17 +123,7 @@ export default function TextInsert({
             >
                 {textInsert.type}
             </span>
-            <input
-                id={styles.textInsertInput}
-                ref={inputRef}
-                contentEditable={gridMode}
-                value={textInsert.text}
-                onChange={(e) => {
-                    textInsert.text = e.target.value;
-                    setPages(() => [...pages]);
-                }}
-                spellCheck="false"
-            />
+            {INPUT}
             <button
                 onClick={() => {
                     onDelete();

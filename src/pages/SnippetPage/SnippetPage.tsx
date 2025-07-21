@@ -10,6 +10,7 @@ import homeStyles from "@/styles/HomeStyles.module.scss";
 import styles from "@/styles/SnippetPageStyle.module.scss";
 import ChannelsTab from "./tabs/ChannelsTab";
 import DesignTab from "./tabs/DesignTab";
+import OptionsTab from "./tabs/OptionsTab";
 import OutputTab, { OutputTabShortcutButtons } from "./tabs/OutputTab";
 import SendsTab, { SendsTabShortcutButtons } from "./tabs/SendsTab";
 
@@ -22,6 +23,7 @@ export enum SnippetPageTabs {
     Fade,
     Groups,
     Design,
+    Options,
 }
 
 export default function SnippetPage({}: Props) {
@@ -111,6 +113,8 @@ export default function SnippetPage({}: Props) {
                 <ChannelsTab snippets={snippets} snippetObj={snippetObj} />
             ) : tab == SnippetPageTabs.Design ? (
                 <DesignTab snippets={snippets} snippetObj={snippetObj} />
+            ) : tab == SnippetPageTabs.Options ? (
+                <OptionsTab snippets={snippets} snippetObj={snippetObj} />
             ) : (
                 <div></div>
             )}
@@ -179,6 +183,14 @@ export default function SnippetPage({}: Props) {
                         onClick={() => setTab(SnippetPageTabs.Design)}
                     >
                         Design
+                    </div>
+                    <div
+                        className={
+                            tab == SnippetPageTabs.Options ? styles.active : ""
+                        }
+                        onClick={() => setTab(SnippetPageTabs.Options)}
+                    >
+                        Options
                     </div>
                 </section>
             </nav>

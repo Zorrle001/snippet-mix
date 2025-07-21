@@ -54,6 +54,11 @@ export default function SnippetDesignPopUp({
             onChange={(e) => {
                 setName(e.target.value);
             }}
+            onBlur={() => {
+                setTimeout(() => window.scrollTo(0, 0), 100);
+                window.scrollBy(0, 1);
+                window.scrollBy(0, -1);
+            }}
         />
     );
 

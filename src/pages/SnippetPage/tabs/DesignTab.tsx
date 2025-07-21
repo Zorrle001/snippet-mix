@@ -45,6 +45,11 @@ export default function DesignTab({ snippets, snippetObj }: Props) {
                 snippetObj.snippetName = e.target.value;
                 setSnippets(() => [...snippets]);
             }}
+            onBlur={() => {
+                setTimeout(() => window.scrollTo(0, 0), 100);
+                window.scrollBy(0, 1);
+                window.scrollBy(0, -1);
+            }}
         />
     );
 
