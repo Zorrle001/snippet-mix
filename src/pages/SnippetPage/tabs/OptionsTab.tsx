@@ -77,6 +77,8 @@ export default function OptionsTab({ snippets, snippetObj }: Props) {
                 <li
                     onClick={() => {
                         // GET HIGHEST FREE NUMBER
+
+                        setSelectedSnippet(null);
                         setSnippets((prevSnippets) => {
                             const snpObj = prevSnippets.find(
                                 (snp) => snp.snippetID === snippetObj.snippetID
@@ -86,7 +88,9 @@ export default function OptionsTab({ snippets, snippetObj }: Props) {
                                 return prevSnippets;
                             }
 
-                            return [...removeItemAll(prevSnippets, snpObj)];
+                            removeItemAll(prevSnippets, snpObj);
+
+                            return [...prevSnippets];
                         });
 
                         setPages((prevPages) => {
@@ -106,8 +110,6 @@ export default function OptionsTab({ snippets, snippetObj }: Props) {
 
                             return [...prevPages];
                         });
-
-                        setSelectedSnippet(null);
 
                         alert("Snippet wurde gelöscht!");
                     }}

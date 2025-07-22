@@ -117,6 +117,8 @@ export default function HomePage({}: Props) {
                     <button
                         id={styles.deleteBtn}
                         onClick={() => {
+                            alert("Button currently disabled");
+                            return;
                             pageObj.name = String(randomBytes(4));
                             setPages(() => [...pages]);
                         }}
@@ -143,6 +145,8 @@ export default function HomePage({}: Props) {
                     <button
                         id={styles.deleteBtn}
                         onClick={() => {
+                            alert("Button currently disabled");
+                            return;
                             setPages((pages) => {
                                 return pages.toSpliced(activePage, 1);
                             });
