@@ -112,14 +112,7 @@ export default function HomePage({}: Props) {
                             >
                                 <i className="fa-solid fa-i-cursor"></i>
                             </button>
-                            <button
-                                id={gridMode ? undefined : styles.deleteBtn}
-                                onClick={() => {
-                                    setGridMode((state) => !state);
-                                }}
-                            >
-                                <i className="fa-solid fa-grip"></i>
-                            </button>
+
                             <button
                                 id={editMode ? undefined : styles.deleteBtn}
                                 onClick={() => {
@@ -127,6 +120,14 @@ export default function HomePage({}: Props) {
                                 }}
                             >
                                 <i className="fa-solid fa-pencil"></i>
+                            </button>
+                            <button
+                                id={gridMode ? undefined : styles.deleteBtn}
+                                onClick={() => {
+                                    setGridMode((state) => !state);
+                                }}
+                            >
+                                <i className="fa-solid fa-grip"></i>
                             </button>
 
                             <button

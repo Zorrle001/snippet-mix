@@ -65,6 +65,8 @@ export default function HomeGrid_v2({
                     id={styles.homeGridField}
                     onClick={() => {
                         if (!gridMode) return;
+
+                        // IF IS GRID MODE, OPEN SNIPPET SELECT POPUP
                         setOpenedPopUpProps({
                             onConfirm(rowData: PageObjRowDataType) {
                                 if (!pageObj.data[row]) {
