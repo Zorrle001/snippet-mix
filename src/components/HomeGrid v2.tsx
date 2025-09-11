@@ -27,13 +27,6 @@ export default function HomeGrid_v2({
     gridMode,
     editMode,
 }: Props) {
-    /*const legacy_collumns = usePagesStore((state) => state.legacy_collumns);
-    const pageObj.rows = usePagesStore((state) => state.pageObj.rows);
-    const set_pageObj.rows = usePagesStore((state) => state.set_pageObj.rows);
-    const set_legacy_Collumns = usePagesStore(
-        (state) => state.set_legacy_Collumns
-    );*/
-
     const setOpenedPopUp = usePopUpStore((state) => state.setOpenedPopUp);
     const setOpenedPopUpProps = usePopUpStore(
         (state) => state.setOpenedPopUpProps
@@ -46,29 +39,10 @@ export default function HomeGrid_v2({
         row: number;
     }>(null);
 
-    /*useEffect(() => {
-        document.addEventListener("mousedown", mouseDown);
-
-        function mouseDown(e: MouseEvent) {
-            setSelected(null);
-        }
-
-        return () => {
-            document.removeEventListener("mousedown", mouseDown);
-        };
-    });*/
-
     const pageObj = pages[activePage];
-
-    const gridFieldCount = pageObj.collumns * pageObj.rows;
     const gridFields = [];
-    /*for (let i = 0; i < gridFieldCount; i++) {
-        gridFields.push(
-            <div key={`field-${i}`}>
-                {snippetCards[i] ? snippetCards[i] : null}
-            </div>
-        );
-    }*/
+
+    // CREATE ALL GRID FIELDS, independant of rows/cols
     let i = 0;
     for (let row = 0; row < pageObj.rows; row++) {
         for (let collumn = 0; collumn < pageObj.collumns; collumn++) {
@@ -82,7 +56,6 @@ export default function HomeGrid_v2({
                     fieldContent = snippetCards[snippetID - 1]
                         ? snippetCards[snippetID - 1]
                         : null;
-                    //fieldContent = snippetCards[i] ? snippetCards[i] : null;
                 }
             }
 
@@ -127,86 +100,8 @@ export default function HomeGrid_v2({
         }
     }
 
-    /*const gridBlocks: {
-        rows: number;
-        data: [];
-    }[] = [];*/
-    /*let Ts = [];
-    for (let i = 0; i < pageObj.rows; i++) {
-        /*const rowData = pageObj.data[i];
-        if (rowData != undefined && rowData.textInserts.length > 0) {
-        }*/
-
-    /*if (editMode)
-            Ts.push(
-                <div
-                    key={`textInsert-${i}`}
-                    onClick={() => {
-                        if (pageObj.data[i] == undefined) {
-                            pageObj.data[i] = {
-                                textInserts: [],
-                            };
-                        }
-                        pageObj.data[i].textInserts.push({
-                            type: TextTypeEnum.H1,
-                            text: "Text 1",
-                        });
-                        setPages(() => [...pages]);
-                    }}
-                >
-                    T
-                </div>
-            );
-        else Ts.push(<span key={`textInsertPlaceholder-${i}`}></span>);
-
-        if (i < pageObj.rows - 1 || pageObj.rows < 2 || !editMode) {
-            Ts.push(<span key={`placeholder-${i}`}></span>);
-        } else {
-            Ts.push(
-                <div
-                    key={`removeRowTag-${i}`}
-                    className={styles.removeRowTag}
-                    onClick={() => {
-                        pageObj.rows--;
-                        setPages(() => [...pages]);
-                        //set_pageObj.rows(pageObj.rows - 1);
-                    }}
-                >
-                    <i className="fa-solid fa-ban"></i>
-                </div>
-            );
-        }
-    }
-
-    if (editMode) {
-        Ts.push(
-            <div
-                key={"addRowTag"}
-                className={styles.addRowTag}
-                onClick={() => {
-                    pageObj.rows++;
-                    setPages(() => [...pages]);
-                }}
-            >
-                <i className="fa-solid fa-arrow-turn-down"></i>
-            </div>
-        );
-    }*/
-
-    /*const gridBlockElements = (
-        <section
-            id={styles.homeGrid}
-            style={{
-                gridTemplateColumns: `repeat(${pageObj.collumns}, 7.5rem)`,
-                gridTemplateRows: `repeat(${pageObj.rows}, 7.5rem)`,
-            }}
-        >
-            {gridFields}
-        </section>
-    );*/
-
+    // SPLIT GRID FIELDS INTO ROWS -> CREATE ROW ELEMENTS: gridRowElements
     const gridRowElements = [];
-    //let fieldID = 0;
     let rowID = 0;
     for (const rowGridFields of splitArrayIntoChunks(
         gridFields,
@@ -296,17 +191,9 @@ export default function HomeGrid_v2({
 
     return (
         <article id={styles.homeGridWrapper}>
-            {/* <section
-                id={styles.homeGrid}
-                style={{
-                    gridTemplateColumns: `repeat(${pageObj.collumns}, 7.5rem)`,
-                    gridTemplateRows: `repeat(${pageObj.rows}, 7.5rem)`,
-                }}
-            > */}
-            {/* {gridFields} */}
             {gridRowElements}
-            {/*  </section> */}
             {gridMode === true ? (
+                //TEMPORARY
                 <>
                     <div
                         key={"addRowTag"}
@@ -324,7 +211,6 @@ export default function HomeGrid_v2({
                         onClick={() => {
                             pageObj.rows--;
                             setPages(() => [...pages]);
-                            //set_pageObj.rows(pageObj.rows - 1);
                         }}
                     >
                         <i className="fa-solid fa-ban"></i>

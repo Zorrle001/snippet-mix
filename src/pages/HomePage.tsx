@@ -208,7 +208,6 @@ export default function HomePage({}: Props) {
             <button
                 onClick={() => {
                     setOpenedPopUp(PopUps.CreatePopUp);
-                    console.log("DONE");
                 }}
                 id={styles.floatingButton}
             >
