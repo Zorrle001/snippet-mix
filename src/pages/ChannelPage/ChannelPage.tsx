@@ -1,12 +1,12 @@
 "use client";
 
-import { FontClassName } from "@/app/layout";
 import FlatSnippetCard from "@/components/FlatSnippetCard";
-import { PopUps, usePopUpStore } from "@/hooks/usePopUpStore";
+import { usePopUpStore } from "@/hooks/usePopUpStore";
 import { useSnippetPageStore } from "@/hooks/useSnippetPageStore";
 import { useSnippetStore } from "@/hooks/useSnippetStore";
 
 import { COLORS } from "@/components/ColorCard";
+import TopNav from "@/components/UI/TopNav";
 import { useChannelPageStore } from "@/hooks/useChannelPageStore";
 import homeStyles from "@/styles/HomeStyles.module.scss";
 import styles from "@/styles/SnippetPageStyle.module.scss";
@@ -42,7 +42,8 @@ export default function ChannelPage({}: Props) {
         (state) => state.setSelectedChannelObj
     );
 
-    if (!selectedChannelID || !selectedChannelObj) return;
+    if (!selectedChannelID || !selectedChannelObj)
+        return <h1 style={{ color: "white" }}>ERROR: No selected Channel</h1>;
 
     const setOpenedPopUp = usePopUpStore((state) => state.setOpenedPopUp);
 
@@ -73,48 +74,13 @@ export default function ChannelPage({}: Props) {
 
     return (
         <article id={styles.snippetPage} className={homeStyles.snippetPage}>
-            <nav id={homeStyles.topNav}>
-                <section id={homeStyles.logo}>
-                    {/* <div></div>
-                    <h1 id={"Test"}>
-                        Snippet
-                        <br />
-                        Mix
-                    </h1>
-                    <div></div> */}
-                    <img src="TransparentWhiteSlimSnippetMixLogo.png" />
-                </section>
-                <section id={homeStyles.status}>
-                    <p>Status</p>
-                    <button
-                        className={FontClassName}
-                        id={homeStyles.online}
-                        onClick={() => {
-                            setOpenedPopUp(PopUps.CreatePopUp);
-                        }}
-                    >
-                        Online
-                    </button>
-                </section>
-                {/* {false && tab == ChannelPageTabs.Gain ? (
-                    <InputTabShortcutButtons
-                        snippets={snippets}
-                        snippetObj={snippetObj}
-                    />
-                ) : null} */}
-
-                <section id={homeStyles.backBtn}>
-                    <button
-                        onClick={() => {
-                            setSelectedChannelID(null);
-                            setSelectedChannelObj(null);
-                        }}
-                    >
-                        <i className="fa-solid fa-arrow-left"></i>
-                        <p className={FontClassName}>Zurück</p>
-                    </button>
-                </section>
-            </nav>
+            {/* CHECK IF NEW TOPNAV WORKS */}
+            <TopNav
+                onBack={() => {
+                    setSelectedChannelID(null);
+                    setSelectedChannelObj(null);
+                }}
+            />
             {tab == ChannelPageTabs.EQ ? (
                 <EqualizerTab />
             ) : tab == ChannelPageTabs.Comp ? (

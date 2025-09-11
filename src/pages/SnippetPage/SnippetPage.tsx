@@ -1,11 +1,11 @@
 "use client";
 
-import { FontClassName } from "@/app/layout";
 import FlatSnippetCard from "@/components/FlatSnippetCard";
-import { PopUps, usePopUpStore } from "@/hooks/usePopUpStore";
+import { usePopUpStore } from "@/hooks/usePopUpStore";
 import { useSnippetPageStore } from "@/hooks/useSnippetPageStore";
 import { useSnippetStore } from "@/hooks/useSnippetStore";
 
+import TopNav from "@/components/UI/TopNav";
 import homeStyles from "@/styles/HomeStyles.module.scss";
 import styles from "@/styles/SnippetPageStyle.module.scss";
 import ChannelsTab from "./tabs/ChannelsTab";
@@ -59,52 +59,25 @@ export default function SnippetPage({}: Props) {
 
     return (
         <article id={styles.snippetPage} className={homeStyles.snippetPage}>
-            <nav id={homeStyles.topNav}>
-                <section id={homeStyles.logo}>
-                    {/* <div></div>
-                    <h1 id={"Test"}>
-                        Snippet
-                        <br />
-                        Mix
-                    </h1>
-                    <div></div> */}
-                    <img src="TransparentWhiteSlimSnippetMixLogo.png" />
-                </section>
-                <section id={homeStyles.status}>
-                    <p>Status</p>
-                    <button
-                        className={FontClassName}
-                        id={homeStyles.online}
-                        onClick={() => {
-                            setOpenedPopUp(PopUps.CreatePopUp);
-                        }}
-                    >
-                        Online
-                    </button>
-                </section>
-                {tab == SnippetPageTabs.Sends ? (
-                    <SendsTabShortcutButtons
-                        snippets={snippets}
-                        snippetObj={snippetObj}
-                    />
-                ) : tab == SnippetPageTabs.Outputs ? (
-                    <OutputTabShortcutButtons
-                        snippets={snippets}
-                        snippetObj={snippetObj}
-                    />
-                ) : null}
+            <TopNav
+                buttons={
+                    tab == SnippetPageTabs.Sends ? (
+                        <SendsTabShortcutButtons
+                            snippets={snippets}
+                            snippetObj={snippetObj}
+                        />
+                    ) : tab == SnippetPageTabs.Outputs ? (
+                        <OutputTabShortcutButtons
+                            snippets={snippets}
+                            snippetObj={snippetObj}
+                        />
+                    ) : null
+                }
+                onBack={() => {
+                    setSelectedSnippet(null);
+                }}
+            />
 
-                <section id={homeStyles.backBtn}>
-                    <button
-                        onClick={() => {
-                            setSelectedSnippet(null);
-                        }}
-                    >
-                        <i className="fa-solid fa-house"></i>
-                        <p className={FontClassName}>Home</p>
-                    </button>
-                </section>
-            </nav>
             {tab == SnippetPageTabs.Sends ? (
                 <SendsTab snippets={snippets} snippetObj={snippetObj} />
             ) : tab == SnippetPageTabs.Outputs ? (

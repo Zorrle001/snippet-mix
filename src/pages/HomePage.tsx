@@ -3,6 +3,7 @@
 import { FontClassName } from "@/app/layout";
 import HomeGrid_v2 from "@/components/HomeGrid v2";
 import SnippetCard from "@/components/SnippetCard";
+import TopNav from "@/components/UI/TopNav";
 import { fallbackPage, usePagesStore } from "@/hooks/usePagesStore";
 import { PopUps, usePopUpStore } from "@/hooks/usePopUpStore";
 import { useSnippetPageStore } from "@/hooks/useSnippetPageStore";
@@ -96,73 +97,59 @@ export default function HomePage({}: Props) {
 
     return (
         <article id={styles.home}>
-            <nav id={styles.topNav}>
-                <section id={styles.logo}>
-                    {/* <div></div>
-                    <h1>
-                        Snippet
-                        <br />
-                        Mix
-                    </h1>
-                    <div></div> */}
-                    <img src="TransparentWhiteSlimSnippetMixLogo.png" />
-                </section>
-                <section id={styles.status}>
-                    <p>Status</p>
-                    <button className={FontClassName} id={styles.online}>
-                        Online
-                    </button>
-                </section>
-                <section id={styles.shortcutBtns}>
-                    <button
-                        id={styles.deleteBtn}
-                        onClick={() => {
-                            alert("Button currently disabled");
-                            return;
-                            pageObj.name = String(randomBytes(4));
-                            setPages(() => [...pages]);
-                        }}
-                    >
-                        <i className="fa-solid fa-i-cursor"></i>
-                    </button>
-                    <button
-                        id={gridMode ? undefined : styles.deleteBtn}
-                        onClick={() => {
-                            setGridMode((state) => !state);
-                        }}
-                    >
-                        <i className="fa-solid fa-grip"></i>
-                    </button>
-                    <button
-                        id={editMode ? undefined : styles.deleteBtn}
-                        onClick={() => {
-                            setEditMode((state) => !state);
-                        }}
-                    >
-                        <i className="fa-solid fa-pencil"></i>
-                    </button>
+            <TopNav
+                buttons={
+                    <>
+                        <section id={styles.shortcutBtns}>
+                            <button
+                                id={styles.deleteBtn}
+                                onClick={() => {
+                                    alert("Button currently disabled");
+                                    return;
+                                    pageObj.name = String(randomBytes(4));
+                                    setPages(() => [...pages]);
+                                }}
+                            >
+                                <i className="fa-solid fa-i-cursor"></i>
+                            </button>
+                            <button
+                                id={gridMode ? undefined : styles.deleteBtn}
+                                onClick={() => {
+                                    setGridMode((state) => !state);
+                                }}
+                            >
+                                <i className="fa-solid fa-grip"></i>
+                            </button>
+                            <button
+                                id={editMode ? undefined : styles.deleteBtn}
+                                onClick={() => {
+                                    setEditMode((state) => !state);
+                                }}
+                            >
+                                <i className="fa-solid fa-pencil"></i>
+                            </button>
 
-                    <button
-                        id={styles.deleteBtn}
-                        onClick={() => {
-                            alert("Button currently disabled");
-                            return;
-                            setPages((pages) => {
-                                return pages.toSpliced(activePage, 1);
-                            });
-                        }}
-                    >
-                        <i className="fa-solid fa-trash"></i>
-                    </button>
-                </section>
-                <section id={styles.pages}>
-                    {/* <button id={styles.lockGrid}>
+                            <button
+                                id={styles.deleteBtn}
+                                onClick={() => {
+                                    alert("Button currently disabled");
+                                    return;
+                                    setPages((pages) => {
+                                        return pages.toSpliced(activePage, 1);
+                                    });
+                                }}
+                            >
+                                <i className="fa-solid fa-trash"></i>
+                            </button>
+                        </section>
+                        <section id={styles.pages}>
+                            {/* <button id={styles.lockGrid}>
                         <i className="fa-solid fa-lock"></i>
                     </button> */}
-                    <span className={styles.gridIcon}>
-                        <i className="fa-solid fa-grip-vertical"></i>
-                    </span>
-                    {/* <input
+                            <span className={styles.gridIcon}>
+                                <i className="fa-solid fa-grip-vertical"></i>
+                            </span>
+                            {/* <input
                         type="number"
                         id={styles.pageGridInputX}
                         defaultValue={collumns}
@@ -171,11 +158,11 @@ export default function HomePage({}: Props) {
                             setCollumns(Number(e.target.value));
                         }}
                     /> */}
-                    <p>{pageObj.collumns}</p>
-                    <span>
-                        <i className="fa-solid fa-xmark"></i>
-                    </span>
-                    {/* <input
+                            <p>{pageObj.collumns}</p>
+                            <span>
+                                <i className="fa-solid fa-xmark"></i>
+                            </span>
+                            {/* <input
                         type="number"
                         id={styles.pageGridInputY}
                         defaultValue={rows}
@@ -184,25 +171,32 @@ export default function HomePage({}: Props) {
                             setRows(Number(e.target.value));
                         }}
                     /> */}
-                    <p>{pageObj.rows}</p>
-                    <select
-                        value={activePage}
-                        onChange={(e) => {
-                            const value = parseInt(e.currentTarget.value);
-                            if (value == -1) {
-                                const newPage = { ...fallbackPage };
-                                newPage.name = "Page " + (pages.length + 1);
-                                setPages(() => [...pages, newPage]);
-                                setActivePage(pages.length);
-                                return;
-                            }
-                            setActivePage(value);
-                        }}
-                    >
-                        {optionElements}
-                    </select>
-                </section>
-            </nav>
+                            <p>{pageObj.rows}</p>
+                            <select
+                                value={activePage}
+                                onChange={(e) => {
+                                    const value = parseInt(
+                                        e.currentTarget.value
+                                    );
+                                    if (value == -1) {
+                                        const newPage = { ...fallbackPage };
+                                        newPage.name =
+                                            "Page " + (pages.length + 1);
+                                        setPages(() => [...pages, newPage]);
+                                        setActivePage(pages.length);
+                                        return;
+                                    }
+                                    setActivePage(value);
+                                }}
+                            >
+                                {optionElements}
+                            </select>
+                        </section>
+                    </>
+                }
+                onBack={() => {}}
+                hideBack={true}
+            />
             {/* {snippetCards} */}
             <HomeGrid_v2
                 snippetCards={snippetCards}
