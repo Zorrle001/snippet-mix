@@ -13,6 +13,7 @@ export default function TabBar({ tabs, activeTab, onNavigate }: Props) {
         tabElements.push(
             <button
                 data-tabID={tabID}
+                key={`tab-${tabID}`}
                 className={activeTab === tabID ? styles.active : ""}
                 onClick={() => {
                     onNavigate(elementTabID);

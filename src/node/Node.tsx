@@ -5,6 +5,7 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import { useNodeConnectionManagerStore } from "@/hooks/useNodeConnectionManagerStore";
 import { PageObjType, usePagesStore } from "@/hooks/usePagesStore";
 import { useSnippetStore } from "@/hooks/useSnippetStore";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket";
 import NodeEffect from "./NodeEffect";
@@ -35,9 +36,16 @@ export default function Node({}) {
     const [nodePages, setNodePages] = useState<PageObjType[]>([]);
 
     const [nodeURL, setNodeURL] = useLocalStorage("nodeURL", null);
-    if (nodeURL == null && typeof window !== "undefined") {
-        //redirect("/nodes");
-        window.location.href = "/nodes";
+    const router = useRouter();
+
+    useEffect(() => {
+        if (nodeURL == null) {
+            router.replace("/nodes");
+        }
+    }, [nodeURL, router]);
+
+    if (nodeURL == null) {
+        return null;
     }
 
     const {

@@ -41,7 +41,7 @@ export default function ChannelsTab({ snippets, snippetObj }: Props) {
                 <ChannelCard
                     id={channelID}
                     name={"Channel " + i}
-                    key={i}
+                    key={channelID}
                     selected={selectedChannels.includes(channelID)}
                     onClick={() => {
                         if (selectedChannels.includes(channelID)) {
@@ -106,7 +106,7 @@ export default function ChannelsTab({ snippets, snippetObj }: Props) {
         }
     } else {
         Cards.push(
-            <div>
+            <div key={"masterBusContainer"}>
                 <ChannelCard
                     id={"lr"}
                     name="LR"
@@ -140,6 +140,7 @@ export default function ChannelsTab({ snippets, snippetObj }: Props) {
             temp.push(
                 <ChannelCard
                     id={`mix${mixID}`}
+                    key={`mix${mixID}`}
                     name={"MIX " + mixID}
                     color={COLORS.Yellow}
                     icon={"fa-solid fa-sliders"}
@@ -168,6 +169,7 @@ export default function ChannelsTab({ snippets, snippetObj }: Props) {
             temp2.push(
                 <ChannelCard
                     id={`mtx${mtxID}`}
+                    key={`mtx${mtxID}`}
                     name={"MTX " + mtxID}
                     color={COLORS.Orange}
                     icon={"fa-solid fa-gears"}
@@ -196,6 +198,7 @@ export default function ChannelsTab({ snippets, snippetObj }: Props) {
             temp3.push(
                 <ChannelCard
                     id={`fx${fxID}`}
+                    key={`fx${fxID}`}
                     name={"FX " + fxID}
                     color={COLORS.Cyan}
                     icon={"fa-solid fa-wand-magic-sparkles"}

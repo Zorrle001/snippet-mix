@@ -33,6 +33,7 @@ export default function SelectSnippetPopUp({
             }}
             style={{ color: "white", height: "7.5rem", width: "7.5rem" }}
             id={styles.clearGridFieldBtn}
+            key={"clearGridFieldBtn"}
         >
             CLEAR
         </h1>

@@ -12,14 +12,8 @@ export default function RootLayout({
 }>) {
     console.log("LAYOUT");
 
-    //const [scopeStart, scopeEnd] = useScopedCSS(scopedCss);
-
-    const testStart = {
-        "scope-start": "",
-    };
-
     return (
-        <html lang="en" {...testStart}>
+        <html lang="en">
             <head>
                 <link
                     rel="stylesheet"

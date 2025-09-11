@@ -6,7 +6,9 @@ import { useSnippetPageStore } from "@/hooks/useSnippetPageStore";
 import ChannelPage from "@/pages/ChannelPage/ChannelPage";
 import HomePage from "@/pages/HomePage";
 import SnippetPage from "@/pages/SnippetPage/SnippetPage";
+import Link from "next/link";
 
+// RENDERS CONNECT/ERROR PAGE or application Pages
 export default function PageRenderer() {
     const isLoading = useNodeConnectionManagerStore((state) => state.isLoading);
     const isConnected = useNodeConnectionManagerStore(
@@ -47,6 +49,9 @@ export default function PageRenderer() {
                     }}
                 >
                     FORCE RELOAD
+                </button>
+                <button>
+                    <Link href="/nodes">SELECT OTHER NODE</Link>
                 </button>
             </>
         );
