@@ -8,6 +8,7 @@ import {
     sortOutputChannelEnumArray,
 } from "@/components/PopUps/CreateSnippetPopUp";
 import { useInputTabStore } from "@/hooks/useInputTabStore";
+import useLocalStorage from "@/hooks/useLocalStorage";
 import { useSnippetStore } from "@/hooks/useSnippetStore";
 import homeStyles from "@/styles/HomeStyles.module.scss";
 import styles from "@/styles/tabs/InputTabStyles.module.scss";
@@ -294,6 +295,8 @@ export function SendsTabShortcutButtons({ snippets, snippetObj }: Props) {
         (state) => state.activeOutputChannel
     );
 
+    const [lockMode, setLockMode] = useLocalStorage("lockMode", "false");
+
     if (snippetObj.snippetOutputChannels[activeOutputChannel] == undefined) {
         return;
     }
@@ -361,6 +364,22 @@ export function SendsTabShortcutButtons({ snippets, snippetObj }: Props) {
 
     return (
         <section id={homeStyles.shortcutBtns}>
+            <button
+                id={lockMode !== "true" ? homeStyles.deleteBtn : ""}
+                onClick={() => {
+                    setLockMode((state: string) => {
+                        if (state === "true") return "false";
+                        else return "true";
+                    });
+                }}
+                className={homeStyles.leftBtn}
+            >
+                {lockMode === "true" ? (
+                    <i className="fa-solid fa-lock"></i>
+                ) : (
+                    <i className="fa-solid fa-unlock"></i>
+                )}
+            </button>
             <button
                 id={homeStyles.faderSCBtn}
                 onClick={() => {

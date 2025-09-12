@@ -4,6 +4,7 @@ import { FontClassName } from "@/app/layout";
 import HomeGrid_v2 from "@/components/HomeGrid v2";
 import SnippetCard from "@/components/SnippetCard";
 import TopNav from "@/components/UI/TopNav";
+import { useLocalStorageStore } from "@/hooks/useLocalStorageStore";
 import { fallbackPage, usePagesStore } from "@/hooks/usePagesStore";
 import { PopUps, usePopUpStore } from "@/hooks/usePopUpStore";
 import { useSnippetPageStore } from "@/hooks/useSnippetPageStore";
@@ -26,6 +27,9 @@ export default function HomePage({}: Props) {
 
     const setGridMode = usePagesStore((state) => state.setGridMode);
     const gridMode = usePagesStore((state) => state.gridMode);
+
+    //const [lockMode, setLockMode] = useLocalStorage("lockMode", "false");
+    const lockMode = useLocalStorageStore((state) => state.lockMode);
 
     //const collumns = usePagesStore((state) => state.legacy_collumns);
     //const rows = usePagesStore((state) => state.legacy_rows);
@@ -75,6 +79,10 @@ export default function HomePage({}: Props) {
                     setSelectedSnippet(snippetObj.snippetID);
                 }
                 if (!gridMode && !editMode) {
+                    if (lockMode === "true") {
+                        alert("Snippet Loading im Lock Mode ist deaktiviert");
+                        return;
+                    }
                     // LOAD SNIPPET
                     //@ts-ignore
                     if (window.sendJSONMessage === undefined) {
@@ -102,19 +110,11 @@ export default function HomePage({}: Props) {
                     <>
                         <section id={styles.shortcutBtns}>
                             <button
-                                id={styles.deleteBtn}
-                                onClick={() => {
-                                    alert("Button currently disabled");
-                                    return;
-                                    pageObj.name = String(randomBytes(4));
-                                    setPages(() => [...pages]);
-                                }}
-                            >
-                                <i className="fa-solid fa-i-cursor"></i>
-                            </button>
-
-                            <button
-                                id={editMode ? undefined : styles.deleteBtn}
+                                id={
+                                    !editMode
+                                        ? styles.deleteBtn
+                                        : styles.editSCBtn
+                                }
                                 onClick={() => {
                                     setEditMode((state) => !state);
                                 }}
@@ -122,7 +122,11 @@ export default function HomePage({}: Props) {
                                 <i className="fa-solid fa-pencil"></i>
                             </button>
                             <button
-                                id={gridMode ? undefined : styles.deleteBtn}
+                                id={
+                                    !gridMode
+                                        ? styles.deleteBtn
+                                        : styles.muteSCBtn
+                                }
                                 onClick={() => {
                                     setGridMode((state) => !state);
                                 }}
@@ -130,7 +134,7 @@ export default function HomePage({}: Props) {
                                 <i className="fa-solid fa-grip"></i>
                             </button>
 
-                            <button
+                            {/* <button
                                 id={styles.deleteBtn}
                                 onClick={() => {
                                     alert("Button currently disabled");
@@ -141,7 +145,7 @@ export default function HomePage({}: Props) {
                                 }}
                             >
                                 <i className="fa-solid fa-trash"></i>
-                            </button>
+                            </button> */}
                         </section>
                         <section id={styles.pages}>
                             {/* <button id={styles.lockGrid}>
@@ -173,6 +177,17 @@ export default function HomePage({}: Props) {
                         }}
                     /> */}
                             <p>{pageObj.rows}</p>
+                            <button
+                                id={styles.pageSettingsBtn}
+                                onClick={() => {
+                                    alert("Button currently disabled");
+                                    return;
+                                    pageObj.name = String(randomBytes(4));
+                                    setPages(() => [...pages]);
+                                }}
+                            >
+                                <i className="fa-solid fa-gear"></i>
+                            </button>
                             <select
                                 value={activePage}
                                 onChange={(e) => {
@@ -189,9 +204,11 @@ export default function HomePage({}: Props) {
                                     }
                                     setActivePage(value);
                                 }}
+                                className={FontClassName}
                             >
                                 {optionElements}
                             </select>
+                            <i className="fa-solid fa-chevron-down"></i>
                         </section>
                     </>
                 }

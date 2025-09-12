@@ -133,7 +133,7 @@ export default function SnippetPage({}: Props) {
                     >
                         Channels
                     </div>
-                    <div
+                    {/* <div
                         className={
                             tab == SnippetPageTabs.Fade ? styles.active : ""
                         }
@@ -148,7 +148,7 @@ export default function SnippetPage({}: Props) {
                         onClick={() => setTab(SnippetPageTabs.Groups)}
                     >
                         Groups
-                    </div>
+                    </div> */}
                     <div
                         className={
                             tab == SnippetPageTabs.Design ? styles.active : ""
