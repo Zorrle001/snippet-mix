@@ -1,29 +1,42 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export type LocalStorageStoreType = {
-    lockMode: string;
-    setLockMode: (callback: (prevMode: string) => string) => void;
-    liveMode: string;
-    setLiveMode: (callback: (prevMode: string) => string) => void;
+    lockMode: boolean;
+    setLockMode: (callback: (prevMode: boolean) => boolean) => void;
+    liveMode: boolean;
+    setLiveMode: (callback: (prevMode: boolean) => boolean) => void;
+    soloMuted: boolean;
+    setSoloMuted: (callback: (prevMode: boolean) => boolean) => void;
 };
 
-export const useLocalStorageStore = create<LocalStorageStoreType>(
-    (set, get) => ({
-        lockMode: localStorage.getItem("lockMode") || "false",
-        setLockMode: (callback) => {
-            set(() => {
-                let mode = callback(get().lockMode);
-                localStorage.setItem("lockMode", mode);
-                return { lockMode: mode };
-            });
-        },
-        liveMode: localStorage.getItem("liveMode") || "false",
-        setLiveMode: (callback) => {
-            set(() => {
-                let mode = callback(get().liveMode);
-                localStorage.setItem("liveMode", mode);
-                return { liveMode: mode };
-            });
-        },
-    })
+export const useLocalStorageStore = create<LocalStorageStoreType>()(
+    persist(
+        (set, get) => ({
+            lockMode: false,
+            setLockMode: (callback) => {
+                set(() => {
+                    let mode = callback(get().lockMode);
+                    return { lockMode: mode };
+                });
+            },
+            liveMode: false,
+            setLiveMode: (callback) => {
+                set(() => {
+                    let mode = callback(get().liveMode);
+                    return { liveMode: mode };
+                });
+            },
+            soloMuted: false,
+            setSoloMuted: (callback) => {
+                set(() => {
+                    let mode = callback(get().soloMuted);
+                    return { soloMuted: mode };
+                });
+            },
+        }),
+        {
+            name: "app-storage",
+        }
+    )
 );

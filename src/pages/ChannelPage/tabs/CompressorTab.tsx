@@ -1,6 +1,10 @@
+import {
+    SoloWebRTCStatus,
+    useSoloWebRTCStore,
+} from "@/hooks/useSoloWebRTCAudioStore";
 import styles from "@/styles/ChannelPage/tabs/CompressorTabStyles.module.scss";
 import { cn } from "@/utils/Utils";
-import { CSSProperties, useMemo, useRef, useState } from "react";
+import { CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 import {
     Area,
     CartesianGrid,
@@ -11,6 +15,12 @@ import {
     XAxis,
     YAxis,
 } from "recharts";
+
+let inputLevelData: Array<{
+    time: number;
+    timestamp: number;
+    dbLevel: number;
+}> = [];
 
 type Props = {};
 export default function CompressorTab({}: Props) {
@@ -29,6 +39,115 @@ export default function CompressorTab({}: Props) {
     const chartRef = useRef<HTMLDivElement | null>(null);
     const mouseDraggingElementRef = useRef<HTMLElement | null>(null);
     const mouseDraggingDotTypeRef = useRef<CompressorDotType | null>(null);
+
+    // TODO: CHANGE TO CHANNEL INPUT LEVEL
+    const soloMonoLevel = useSoloWebRTCStore((state) => state.soloMonoLevel);
+    const [realtimeMonoLevel, setRealtimeMonoLevel] = useState([
+        0,
+        performance.now(),
+    ]);
+
+    const realtimeAnalyser = useSoloWebRTCStore(
+        (state) => state.realtimeAnalyser
+    );
+    const status = useSoloWebRTCStore((state) => state.status);
+
+    const newInputLevelData: Array<{
+        time: number;
+        timestamp: number;
+        dbLevel: number;
+    }> = [];
+
+    //const now = performance.now();
+
+    useEffect(() => {
+        if (status !== SoloWebRTCStatus.STREAMING || !realtimeAnalyser) {
+            return;
+        }
+
+        let rafId: NodeJS.Timeout | null = null;
+        let stopped = false;
+
+        // Allocate buffer once for this run
+        const buf = new Float32Array(realtimeAnalyser.fftSize);
+
+        const normFromDb = (db: number, minDb = -60) => {
+            const norm = (db - minDb) / -minDb;
+            // clamp
+            return Math.min(1, Math.max(0, norm));
+        };
+
+        const getPeakDbfs = () => {
+            realtimeAnalyser.getFloatTimeDomainData(buf);
+            let peak = 0;
+            for (let i = 0; i < buf.length; i++) {
+                const v = Math.abs(buf[i]);
+                if (v > peak) peak = v;
+            }
+            return peak <= 1e-12 ? -100 : 20 * Math.log10(peak);
+        };
+
+        const loop = () => {
+            if (stopped) return;
+
+            //console.log("REALTIME LEVEL LOOP");
+
+            //const now = performance.now();
+
+            const peakDb = getPeakDbfs();
+
+            // Normieren
+            const peakNorm = normFromDb(peakDb);
+
+            setRealtimeMonoLevel([peakNorm, performance.now()]);
+
+            //rafId = requestAnimationFrame(loop);
+        };
+
+        rafId = setInterval(loop, 0);
+
+        // Cleanup when status/analyser changes or on unmount
+        return () => {
+            stopped = true;
+            if (rafId != null) clearInterval(rafId);
+
+            let unmountZeroDataPoint: [number, number] = [0, performance.now()];
+            //setRealtimeMonoLevel(unmountZeroDataPoint);
+            //shift_and_custum_fill_graph(unmountZeroDataPoint);
+            inputLevelData = [
+                {
+                    time: 0,
+                    timestamp: performance.now(),
+                    dbLevel: -60,
+                },
+            ];
+        };
+    }, [realtimeAnalyser, status]);
+
+    function shift_and_fill_graph() {
+        const newInputLevelData = [];
+
+        for (const inputLevelDataPoint of inputLevelData) {
+            newInputLevelData.push({
+                time:
+                    (inputLevelDataPoint.timestamp - realtimeMonoLevel[1]) /
+                    1000.0,
+                timestamp: inputLevelDataPoint.timestamp,
+                dbLevel: inputLevelDataPoint.dbLevel,
+            });
+        }
+
+        newInputLevelData.push({
+            time: 0,
+            timestamp: realtimeMonoLevel[1],
+            dbLevel: (1 - realtimeMonoLevel[0]) * -60,
+        });
+
+        inputLevelData = [
+            ...newInputLevelData.filter((dataPoint) => dataPoint.time >= -5),
+        ];
+    }
+    shift_and_fill_graph();
 
     const data = useMemo(
         () => [
@@ -157,7 +276,7 @@ export default function CompressorTab({}: Props) {
                         tickMargin={0.5 * 16}
                         fontSize={16 * 0.75}
                     />
-                    <Area
+                    {/* <Area
                         yAxisId="left"
                         type="linear"
                         dataKey={"inputDB"}
@@ -168,9 +287,9 @@ export default function CompressorTab({}: Props) {
                         dot={false}
                         isAnimationActive={false}
                         baseValue={-60}
-                    ></Area>
+                    ></Area> */}
                     {/* MAKEUP GAIN CHART?: https://youtube.com/shorts/TuwaFYH1wiw */}
-                    <Area
+                    {/* <Area
                         yAxisId="left"
                         type="linear"
                         dataKey={"outputDB"}
@@ -181,8 +300,8 @@ export default function CompressorTab({}: Props) {
                         dot={false}
                         isAnimationActive={false}
                         baseValue={-60}
-                    ></Area>
-                    <Line
+                    ></Area> */}
+                    {/* <Line
                         yAxisId="left"
                         type="monotone"
                         dataKey="compressionDB"
@@ -190,7 +309,7 @@ export default function CompressorTab({}: Props) {
                         strokeWidth={2}
                         name="CompressionDB Curve"
                         dot={false}
-                    />
+                    /> */}
                     <Line
                         yAxisId="left"
                         type="monotone"
@@ -211,10 +330,36 @@ export default function CompressorTab({}: Props) {
                         ]}
                         isAnimationActive={false}
                     />
+                    {/* Input Level Chart */}
+                    {/* <Line
+                        yAxisId="left"
+                        //type="monotone"
+                        dataKey="dbLevel"
+                        stroke="white" // Grau für Resultierende Phase
+                        strokeWidth={2}
+                        name="Input Level"
+                        dot={false}
+                        data={inputLevelData}
+                        isAnimationActive={false}
+                    /> */}
+                    <Area
+                        yAxisId="left"
+                        type="linear"
+                        dataKey={"dbLevel"}
+                        stroke={"white"}
+                        fill={`color-mix(in hsl, ${"white"}, transparent 70%)`}
+                        strokeWidth={1}
+                        name={`Input Level Curve`}
+                        dot={false}
+                        data={inputLevelData}
+                        isAnimationActive={false}
+                        baseValue={-60}
+                        /* connectNulls={false} */
+                    />
                 </ComposedChart>
             </ResponsiveContainer>
         ),
-        [threshold]
+        [threshold, realtimeMonoLevel]
     );
 
     function mouseMove(e: React.MouseEvent<HTMLElement, MouseEvent>) {
@@ -394,6 +539,28 @@ export default function CompressorTab({}: Props) {
         );
     });
 
+    let LevelDotElement = <></>;
+
+    if (chartRef.current && soloMonoLevel[0] > 0) {
+        const height = chartRef.current.offsetHeight - 30;
+        const width = chartRef.current.offsetWidth - 3.6 * 16;
+
+        LevelDotElement = (
+            <div
+                className={styles.compressorLevelDot}
+                key={`compressorLevelDot`}
+                style={
+                    {
+                        left: `calc(${width * soloMonoLevel[0] + 3.6 * 16}px)`,
+                        top: `calc(${height * (1 - soloMonoLevel[0])}px)`,
+                    } as CSSProperties
+                }
+            >
+                <div className={styles.circle}></div>
+            </div>
+        );
+    }
+
     return (
         <article
             id={styles.compressorTab}
@@ -407,6 +574,7 @@ export default function CompressorTab({}: Props) {
             <section id={styles.leftPart}>
                 {CompressorGraph}
                 {CompressorDotElements}
+                {LevelDotElement}
             </section>
             <section id={styles.rightPart}>
                 <section id={styles.historyChartSection}>
@@ -586,3 +754,25 @@ function releaseRound(value: number): number {
 
     return value; // Fallback
 }
+
+/* function shift_and_custum_fill_graph(monoLevel: [number, number]) {
+    const newInputLevelData = [];
+
+    for (const inputLevelDataPoint of inputLevelData) {
+        newInputLevelData.push({
+            time: (inputLevelDataPoint.timestamp - monoLevel[1]) / 1000.0,
+            timestamp: inputLevelDataPoint.timestamp,
+            dbLevel: inputLevelDataPoint.dbLevel,
+        });
+    }
+
+    newInputLevelData.push({
+        time: 0,
+        timestamp: monoLevel[1],
+        dbLevel: (1 - monoLevel[0]) * -60,
+    });
+
+    inputLevelData = [
+        ...newInputLevelData.filter((dataPoint) => dataPoint.time >= -5),
+    ];
+} */

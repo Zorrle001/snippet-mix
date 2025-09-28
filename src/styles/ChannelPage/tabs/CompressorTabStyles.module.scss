@@ -71,6 +71,16 @@
                 pointer-events: none;
             }
         }
+
+        div.compressorLevelDot {
+            position: absolute;
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 100%;
+            transform: translate(-50%, -50%);
+
+            background-color: white;
+        }
     }
 
     #rightPart {

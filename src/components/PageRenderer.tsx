@@ -1,10 +1,13 @@
 "use client";
 
 import { useChannelPageStore } from "@/hooks/useChannelPageStore";
+import { useLocalStorageStore } from "@/hooks/useLocalStorageStore";
 import { useNodeConnectionManagerStore } from "@/hooks/useNodeConnectionManagerStore";
 import { useSnippetPageStore } from "@/hooks/useSnippetPageStore";
 import ChannelPage from "@/pages/ChannelPage/ChannelPage";
 import HomePage from "@/pages/HomePage";
+import LiveChannelPage from "@/pages/Live/LiveChannelPage";
+import LivePage from "@/pages/Live/LivePage";
 import SnippetPage from "@/pages/SnippetPage/SnippetPage";
 import Link from "next/link";
 
@@ -22,6 +25,11 @@ export default function PageRenderer() {
     const isChannelPageVisible = useChannelPageStore((state) =>
         state.isPageVisible()
     );
+    const selectedChannelID = useChannelPageStore(
+        (state) => state.selectedChannelID
+    );
+
+    const liveMode = useLocalStorageStore((state) => state.liveMode);
 
     //useNodeConnectionManager();
     //console.warn("PAGE RENDERER");
@@ -56,7 +64,11 @@ export default function PageRenderer() {
             </>
         );
 
-    return isChannelPageVisible ? (
+    return liveMode === true && selectedChannelID == null ? (
+        <LivePage />
+    ) : liveMode === true && selectedChannelID !== null ? (
+        <LiveChannelPage />
+    ) : isChannelPageVisible ? (
         <ChannelPage />
     ) : !isSnippetPageVisible ? (
         <HomePage />

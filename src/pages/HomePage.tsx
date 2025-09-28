@@ -79,7 +79,7 @@ export default function HomePage({}: Props) {
                     setSelectedSnippet(snippetObj.snippetID);
                 }
                 if (!gridMode && !editMode) {
-                    if (lockMode === "true") {
+                    if (lockMode === true) {
                         alert("Snippet Loading im Lock Mode ist deaktiviert");
                         return;
                     }

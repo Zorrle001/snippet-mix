@@ -1,5 +1,6 @@
 import "@/styles/globals.scss";
 import { Noto_Sans_JP } from "next/font/google";
+import { CSSProperties } from "react";
 
 const noto_sans = Noto_Sans_JP({ subsets: ["latin"] });
 
@@ -13,7 +14,14 @@ export default function RootLayout({
     console.log("LAYOUT");
 
     return (
-        <html lang="en">
+        <html
+            lang="en"
+            style={
+                {
+                    "--noto-sans": `'${noto_sans.style.fontFamily}'`,
+                } as CSSProperties
+            }
+        >
             <head>
                 <link
                     rel="stylesheet"

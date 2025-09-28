@@ -6,9 +6,16 @@ type Props = {
     buttons?: JSX.Element | null;
     onBack?: () => void;
     hideBack?: boolean;
+    hideLock?: boolean;
     backMode?: boolean;
 };
-export default function TopNav({ buttons, onBack, hideBack, backMode }: Props) {
+export default function TopNav({
+    buttons,
+    onBack,
+    hideBack,
+    hideLock,
+    backMode,
+}: Props) {
     const liveMode = useLocalStorageStore((state) => state.liveMode);
     const setLiveMode = useLocalStorageStore((state) => state.setLiveMode);
 
@@ -16,14 +23,11 @@ export default function TopNav({ buttons, onBack, hideBack, backMode }: Props) {
     const setLockMode = useLocalStorageStore((state) => state.setLockMode);
 
     return (
-        <nav id={homeStyles.topNav}>
+        <nav id={homeStyles.topNav} /*  style={{ display: "none" }} */>
             <section
                 id={homeStyles.logo}
                 onClick={() => {
-                    setLiveMode((state: string) => {
-                        if (state === "true") return "false";
-                        else return "true";
-                    });
+                    setLiveMode((state) => !state);
                 }}
             >
                 {/* <div></div> */}
@@ -32,7 +36,7 @@ export default function TopNav({ buttons, onBack, hideBack, backMode }: Props) {
                     <br />
                     Mix
                     <br />
-                    {liveMode === "true" && (
+                    {liveMode === true && (
                         <span>
                             <i className="fa-solid fa-circle"></i>Live
                         </span>
@@ -48,22 +52,21 @@ export default function TopNav({ buttons, onBack, hideBack, backMode }: Props) {
                 </button>
             </section>
             <section id={homeStyles.lockBtnContainer}>
-                <button
-                    id={lockMode !== "true" ? homeStyles.deleteBtn : ""}
-                    onClick={() => {
-                        setLockMode((state: string) => {
-                            if (state === "true") return "false";
-                            else return "true";
-                        });
-                    }}
-                    className={homeStyles.leftBtn}
-                >
-                    {lockMode === "true" ? (
-                        <i className="fa-solid fa-lock"></i>
-                    ) : (
-                        <i className="fa-solid fa-unlock"></i>
-                    )}
-                </button>
+                {!hideLock && (
+                    <button
+                        id={lockMode !== true ? homeStyles.deleteBtn : ""}
+                        onClick={() => {
+                            setLockMode((state) => !state);
+                        }}
+                        className={homeStyles.leftBtn}
+                    >
+                        {lockMode === true ? (
+                            <i className="fa-solid fa-lock"></i>
+                        ) : (
+                            <i className="fa-solid fa-unlock"></i>
+                        )}
+                    </button>
+                )}
             </section>
             {buttons}
             {!hideBack && (

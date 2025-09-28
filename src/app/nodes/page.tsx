@@ -20,9 +20,19 @@ export default function NodesPage({}: Props) {
                     <h1>Node Connections</h1>
                     <p>Wähle eine Node aus, um eine Verbindung herzustellen</p>
                 </div>
-                <button className={FontClassName}>
+                <button
+                    className={FontClassName}
+                    onClick={() => {
+                        const url = prompt(
+                            "Gib eine Node URL ein:",
+                            "192.168.178.37"
+                        );
+                        setNodeURL(url);
+                        window.location.replace("/");
+                    }}
+                >
                     <i className="fa-solid fa-plus"></i>
-                    <p>Hinzufügen</p>
+                    <p>{/* Hinzufügen */}Verbinden</p>
                 </button>
             </nav>
 
@@ -37,7 +47,7 @@ export default function NodesPage({}: Props) {
                             href="/"
                             className={FontClassName}
                             onClick={() => {
-                                setNodeURL("192.168.188.112:8080");
+                                setNodeURL("192.168.188.112");
                             }}
                         >
                             <i className="fa-solid fa-link"></i>
@@ -59,7 +69,7 @@ export default function NodesPage({}: Props) {
                             href="/"
                             className={FontClassName}
                             onClick={() => {
-                                setNodeURL("localhost:8080");
+                                setNodeURL("localhost");
                             }}
                         >
                             <i className="fa-solid fa-link"></i>

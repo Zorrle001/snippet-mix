@@ -5,6 +5,7 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import { useNodeConnectionManagerStore } from "@/hooks/useNodeConnectionManagerStore";
 import { PageObjType, usePagesStore } from "@/hooks/usePagesStore";
 import { useSnippetStore } from "@/hooks/useSnippetStore";
+import { useSoloWebRTCStore } from "@/hooks/useSoloWebRTCAudioStore";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket";
@@ -35,8 +36,15 @@ export default function Node({}) {
     const [nodeSnippets, setNodeSnippets] = useState<SnippetObjType[]>([]);
     const [nodePages, setNodePages] = useState<PageObjType[]>([]);
 
+    const pcRef = useSoloWebRTCStore((state) => state.pcRef);
+    const audioRef = useSoloWebRTCStore((state) => state.audioRef);
+
     const [nodeURL, setNodeURL] = useLocalStorage("nodeURL", null);
     const router = useRouter();
+
+    const [pendingICECandidates, setPendingIceCandidates] = useState<
+        RTCIceCandidateInit[]
+    >([]);
 
     useEffect(() => {
         if (nodeURL == null) {
@@ -55,7 +63,7 @@ export default function Node({}) {
         lastJsonMessage,
         readyState,
         getWebSocket,
-    } = useWebSocket("ws://" + nodeURL, {
+    } = useWebSocket("ws://" + nodeURL + ":8080", {
         share: true,
         onOpen: () => {
             // MOVED TO Connect Message
@@ -151,7 +159,44 @@ export default function Node({}) {
                 alert("Snippet " + data.snippetName + " successfully updated");
                 return [...prevSnippets];
             });
-        } else {
+        }
+        // SOLO WebRTC Stuff
+        else if (id === "SOLO_AUDIO_STREAM_ANSWER") {
+            (async () => {
+                if (!pcRef.current) {
+                    console.error(
+                        "Can't handle WebRTC Answer because pcRef is null"
+                    );
+                    return;
+                }
+                console.log("SET REMOTE DESCRIPTION", data);
+
+                await pcRef.current.setRemoteDescription(data);
+
+                for (const c of pendingICECandidates) {
+                    await pcRef.current.addIceCandidate(c);
+                    console.log("ADDED BUFFERED ICE CANDIDATE", c);
+                }
+                setPendingIceCandidates([]);
+            })();
+        } else if (id === "SOLO_AUDIO_STREAM_ICE_CANDIDATE") {
+            if (!pcRef.current) {
+                console.error(
+                    "Can't handle WebRTC CANDIDATE because pcRef is null"
+                );
+                return;
+            }
+
+            if (pcRef.current.remoteDescription) {
+                console.log("ADD ICE CANDIDATE", data);
+                /*await */ pcRef.current.addIceCandidate(data);
+            } else {
+                console.log("PUSHED PENDING ICE CANDIDATE", data);
+                pendingICECandidates.push(data);
+            }
+        }
+        //
+        else {
             console.error("MessageID is invalid");
         }
         console.log("Date Recieved on:", new Date().getTime());

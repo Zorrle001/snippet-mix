@@ -2,6 +2,10 @@ export function cn(...classes: string[]) {
     return classes.join(" ");
 }
 
+export function CN(...classes: string[]) {
+    return classes.join(" ");
+}
+
 export function removeItemAll(arr: any[], value: any) {
     var i = 0;
     while (i < arr.length) {
