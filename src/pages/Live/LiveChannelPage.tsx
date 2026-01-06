@@ -8,19 +8,12 @@ import TopNav from "@/components/UI/TopNav";
 import { useChannelPageStore } from "@/hooks/useChannelPageStore";
 import homeStyles from "@/styles/HomeStyles.module.scss";
 import styles from "@/styles/SnippetPageStyle.module.scss";
+import { ChannelPageTabs } from "../ChannelPage/ChannelPage";
 import CompressorTab from "../ChannelPage/tabs/CompressorTab";
 import EqualizerTab from "../ChannelPage/tabs/EqualizerTab";
+import RTATab from "../ChannelPage/tabs/RTATab";
 
 type Props = {};
-
-export enum ChannelPageTabs {
-    Input,
-    EQ,
-    Gate,
-    Comp,
-    SendTo,
-    Design,
-}
 
 export default function LiveChannelPage({}: Props) {
     const tab = useChannelPageStore((state) => state.tab);
@@ -59,7 +52,9 @@ export default function LiveChannelPage({}: Props) {
                     //setSelectedChannelObj(null);
                 }}
             />
-            {tab == ChannelPageTabs.EQ ? (
+            {tab == ChannelPageTabs.RTA ? (
+                <RTATab />
+            ) : tab == ChannelPageTabs.EQ ? (
                 <EqualizerTab />
             ) : tab == ChannelPageTabs.Comp ? (
                 <CompressorTab />
@@ -92,6 +87,14 @@ export default function LiveChannelPage({}: Props) {
                         onClick={() => setTab(ChannelPageTabs.Input)}
                     >
                         Input
+                    </div>
+                    <div
+                        className={
+                            tab == ChannelPageTabs.RTA ? styles.active : ""
+                        }
+                        onClick={() => setTab(ChannelPageTabs.RTA)}
+                    >
+                        RTA
                     </div>
                     <div
                         className={

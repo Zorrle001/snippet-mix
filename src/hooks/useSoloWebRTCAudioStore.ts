@@ -22,6 +22,8 @@ export type SoloWebRTCStoreType = {
     setMeterAnalyser: (meterAnalyser: AnalyserNode | null) => void;
     realtimeAnalyser: AnalyserNode | null;
     setRealtimeAnalyser: (realtimeAnalyser: AnalyserNode | null) => void;
+    compressorNode: DynamicsCompressorNode | null;
+    setCompressorNode: (compressor: DynamicsCompressorNode) => void;
     soloMonoLevel: [number, number]; // [level, timestamp]
     setSoloMonoLevel: (level: [number, number]) => void;
 };
@@ -40,6 +42,10 @@ export const useSoloWebRTCStore = create<SoloWebRTCStoreType>((set, get) => ({
     realtimeAnalyser: null,
     setRealtimeAnalyser: (realtimeAnalyser: AnalyserNode | null) =>
         set({ realtimeAnalyser }),
+    compressorNode: null,
+    setCompressorNode: (compressor: DynamicsCompressorNode) => {
+        set({ compressorNode: compressor });
+    },
     soloMonoLevel: [0, performance.now()],
     setSoloMonoLevel: (level: [number, number]) =>
         set({ soloMonoLevel: level }),

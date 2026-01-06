@@ -1,3 +1,6 @@
+import usePeakHoldNode, {
+    PEAK_HOLD_MODE,
+} from "@/components/Solo/PeakHoldNode";
 import {
     SoloWebRTCStatus,
     useSoloWebRTCStore,
@@ -22,6 +25,18 @@ let inputLevelData: Array<{
     dbLevel: number;
 }> = [];
 
+let gainReductionData: Array<{
+    time: number;
+    timestamp: number;
+    dbLevel: number;
+}> = [];
+
+let combinedLevelData: Array<{
+    time: number;
+    timestamp: number;
+    dbLevel: number;
+}> = [];
+
 type Props = {};
 export default function CompressorTab({}: Props) {
     enum CompressorDotType {
@@ -41,8 +56,12 @@ export default function CompressorTab({}: Props) {
     const mouseDraggingDotTypeRef = useRef<CompressorDotType | null>(null);
 
     // TODO: CHANGE TO CHANNEL INPUT LEVEL
-    const soloMonoLevel = useSoloWebRTCStore((state) => state.soloMonoLevel);
+    const meterMonoLevel = useSoloWebRTCStore((state) => state.soloMonoLevel);
     const [realtimeMonoLevel, setRealtimeMonoLevel] = useState([
+        0,
+        performance.now(),
+    ]);
+    const [realtimeGainReduction, setRealtimeGainReduction] = useState([
         0,
         performance.now(),
     ]);
@@ -50,7 +69,13 @@ export default function CompressorTab({}: Props) {
     const realtimeAnalyser = useSoloWebRTCStore(
         (state) => state.realtimeAnalyser
     );
+    const compressorNode = useSoloWebRTCStore((state) => state.compressorNode);
+
     const status = useSoloWebRTCStore((state) => state.status);
+
+    const peakHoldIn = usePeakHoldNode(PEAK_HOLD_MODE.METER_MODE);
+    const peakHoldOut = usePeakHoldNode(PEAK_HOLD_MODE.METER_MODE);
+    const peakHoldGR = usePeakHoldNode(PEAK_HOLD_MODE.GAIN_REDUCTION_MODE);
 
     const newInputLevelData: Array<{
         time: number;
@@ -64,6 +89,8 @@ export default function CompressorTab({}: Props) {
         if (status !== SoloWebRTCStatus.STREAMING || !realtimeAnalyser) {
             return;
         }
+
+        window.compressorNode = compressorNode;
 
         let rafId: NodeJS.Timeout | null = null;
         let stopped = false;
@@ -99,7 +126,15 @@ export default function CompressorTab({}: Props) {
             // Normieren
             const peakNorm = normFromDb(peakDb);
 
+            // state needed for graph rerender!
             setRealtimeMonoLevel([peakNorm, performance.now()]);
+
+            if (compressorNode) {
+                setRealtimeGainReduction([
+                    compressorNode.reduction,
+                    performance.now(),
+                ]);
+            }
 
             //rafId = requestAnimationFrame(loop);
         };
@@ -121,9 +156,26 @@ export default function CompressorTab({}: Props) {
                     dbLevel: -60,
                 },
             ];
-        };
-    }, [realtimeAnalyser, status]);
 
+            gainReductionData = [
+                {
+                    time: 0,
+                    timestamp: performance.now(),
+                    dbLevel: 0,
+                },
+            ];
+
+            combinedLevelData = [
+                {
+                    time: 0,
+                    timestamp: performance.now(),
+                    dbLevel: -60,
+                },
+            ];
+        };
+    }, [realtimeAnalyser, status, compressorNode]);
+
+    // READ FROM
     function shift_and_fill_graph() {
         const newInputLevelData = [];
 
@@ -148,6 +200,59 @@ export default function CompressorTab({}: Props) {
         ];
     }
     shift_and_fill_graph();
+
+    function shift_and_fill_gain_reducation_graph() {
+        const newGainReductionData = [];
+
+        for (const gainReductionDataPoint of gainReductionData) {
+            newGainReductionData.push({
+                time:
+                    (gainReductionDataPoint.timestamp -
+                        realtimeGainReduction[1]) /
+                    1000.0,
+                timestamp: gainReductionDataPoint.timestamp,
+                dbLevel: gainReductionDataPoint.dbLevel,
+            });
+        }
+
+        newGainReductionData.push({
+            time: 0,
+            timestamp: realtimeGainReduction[1],
+            dbLevel: realtimeGainReduction[0],
+        });
+
+        gainReductionData = [
+            ...newGainReductionData.filter((dataPoint) => dataPoint.time >= -5),
+        ];
+    }
+    shift_and_fill_gain_reducation_graph();
+
+    function shift_and_fill_combined_level_graph() {
+        const newCombinedLevelData = [];
+
+        const now = (realtimeGainReduction[1] + realtimeGainReduction[1]) / 2;
+
+        for (const combinedLevelDataPoint of combinedLevelData) {
+            newCombinedLevelData.push({
+                time: (combinedLevelDataPoint.timestamp - now) / 1000.0,
+                timestamp: combinedLevelDataPoint.timestamp,
+                dbLevel: combinedLevelDataPoint.dbLevel,
+            });
+        }
+
+        newCombinedLevelData.push({
+            time: 0,
+            timestamp: now,
+            // -50 + -5 = -55
+            dbLevel:
+                (1 - realtimeMonoLevel[0]) * -60 + realtimeGainReduction[0],
+        });
+
+        combinedLevelData = [
+            ...newCombinedLevelData.filter((dataPoint) => dataPoint.time >= -5),
+        ];
+    }
+    shift_and_fill_combined_level_graph();
 
     const data = useMemo(
         () => [
@@ -204,6 +309,8 @@ export default function CompressorTab({}: Props) {
                         }}
                         ticks={[-60, -50, -40, -30, -20, -10, 0]}
                         tickMargin={0.5 * 16}
+                        fontSize={16 * 0.85}
+                        interval={0}
                     />
                     <YAxis
                         yAxisId="left"
@@ -215,6 +322,8 @@ export default function CompressorTab({}: Props) {
                             return `${tick}dB`;
                         }}
                         tickMargin={0.5 * 16}
+                        fontSize={16 * 0.85}
+                        interval={0}
                     />
                     <Area
                         yAxisId="left"
@@ -346,8 +455,8 @@ export default function CompressorTab({}: Props) {
                         yAxisId="left"
                         type="linear"
                         dataKey={"dbLevel"}
-                        stroke={"white"}
-                        fill={`color-mix(in hsl, ${"white"}, transparent 70%)`}
+                        stroke={"gray"}
+                        fill={`color-mix(in hsl, ${"gray"}, transparent 70%)`}
                         strokeWidth={1}
                         name={`Input Level Curve`}
                         dot={false}
@@ -356,10 +465,38 @@ export default function CompressorTab({}: Props) {
                         baseValue={-60}
                         /* connectNulls={false} */
                     />
+                    <Area
+                        yAxisId="left"
+                        type="linear"
+                        dataKey={"dbLevel"}
+                        stroke={"white"}
+                        fill={`color-mix(in hsl, ${"white"}, transparent 70%)`}
+                        strokeWidth={1}
+                        name={`Combined Level Curve`}
+                        dot={false}
+                        data={combinedLevelData}
+                        isAnimationActive={false}
+                        baseValue={-60}
+                        /* connectNulls={false} */
+                    />
+                    <Area
+                        yAxisId="left"
+                        type="linear"
+                        dataKey={"dbLevel"}
+                        stroke={"orange"}
+                        fill={`color-mix(in hsl, ${"orange"}, transparent 70%)`}
+                        strokeWidth={1}
+                        name={`Gain Reduction Curve`}
+                        dot={false}
+                        data={gainReductionData}
+                        isAnimationActive={false}
+                        baseValue={0}
+                        /* connectNulls={false} */
+                    />
                 </ComposedChart>
             </ResponsiveContainer>
         ),
-        [threshold, realtimeMonoLevel]
+        [threshold, realtimeMonoLevel, realtimeGainReduction]
     );
 
     function mouseMove(e: React.MouseEvent<HTMLElement, MouseEvent>) {
@@ -400,6 +537,7 @@ export default function CompressorTab({}: Props) {
             );
 
             setThreshold(db);
+            if (compressorNode) compressorNode.threshold.value = db;
         } else if (type == CompressorDotType.RATIO) {
             const db = Math.max(Math.min(percentage * -60, 0), -60);
 
@@ -413,6 +551,8 @@ export default function CompressorTab({}: Props) {
             console.log("RATIO:", newRatio);
 
             setRatio(newRatio);
+
+            if (compressorNode) compressorNode.ratio.value = newRatio;
         }
     }
 
@@ -491,6 +631,7 @@ export default function CompressorTab({}: Props) {
                         );
 
                         setThreshold(db);
+                        if (compressorNode) compressorNode.threshold.value = db;
                     } else if (dotData.type == CompressorDotType.RATIO) {
                         const db = Math.max(Math.min(percentage * -60, 0), -60);
 
@@ -504,6 +645,9 @@ export default function CompressorTab({}: Props) {
                         console.log("RATIO:", newRatio);
 
                         setRatio(newRatio);
+
+                        if (compressorNode)
+                            compressorNode.ratio.value = newRatio;
                     }
                 }}
                 onMouseDown={(e) => {
@@ -541,7 +685,7 @@ export default function CompressorTab({}: Props) {
 
     let LevelDotElement = <></>;
 
-    if (chartRef.current && soloMonoLevel[0] > 0) {
+    if (chartRef.current && meterMonoLevel[0] > 0) {
         const height = chartRef.current.offsetHeight - 30;
         const width = chartRef.current.offsetWidth - 3.6 * 16;
 
@@ -551,8 +695,8 @@ export default function CompressorTab({}: Props) {
                 key={`compressorLevelDot`}
                 style={
                     {
-                        left: `calc(${width * soloMonoLevel[0] + 3.6 * 16}px)`,
-                        top: `calc(${height * (1 - soloMonoLevel[0])}px)`,
+                        left: `calc(${width * meterMonoLevel[0] + 3.6 * 16}px)`,
+                        top: `calc(${height * (1 - meterMonoLevel[0])}px)`,
                     } as CSSProperties
                 }
             >
@@ -572,9 +716,64 @@ export default function CompressorTab({}: Props) {
             }}
         >
             <section id={styles.leftPart}>
-                {CompressorGraph}
-                {CompressorDotElements}
-                {LevelDotElement}
+                <section id={styles.meterContainer}>
+                    <div
+                        className={styles.meter}
+                        style={
+                            {
+                                "--level": realtimeMonoLevel[0],
+                                "--peak": peakHoldIn.push(
+                                    realtimeMonoLevel[0],
+                                    realtimeMonoLevel[1]
+                                ),
+                            } as CSSProperties
+                        }
+                    >
+                        <span></span>
+                        <b>IN</b>
+                    </div>
+                    <ul>
+                        <li>0</li>
+                        <li>-6</li>
+                        <li>-12</li>
+                        <li>-18</li>
+                        <li>-24</li>
+                        <li>-30</li>
+                        <li>-36</li>
+                        <li>-42</li>
+                        <li>-48</li>
+                        <li>-54</li>
+                        <li>-60</li>
+                    </ul>
+                    <div
+                        className={styles.meter}
+                        style={
+                            {
+                                "--level":
+                                    1 -
+                                    combinedLevelData[
+                                        combinedLevelData.length - 1
+                                    ].dbLevel /
+                                        -60,
+                                "--peak": peakHoldOut.push(
+                                    1 -
+                                        combinedLevelData[
+                                            combinedLevelData.length - 1
+                                        ].dbLevel /
+                                            -60
+                                ),
+                            } as CSSProperties
+                        }
+                    >
+                        <span></span>
+                        <b>OUT</b>
+                    </div>
+                </section>
+                <section id={styles.compressorContainer}>
+                    {CompressorGraph}
+                    {CompressorDotElements}
+                    {LevelDotElement}
+                </section>
             </section>
             <section id={styles.rightPart}>
                 <section id={styles.historyChartSection}>
@@ -597,6 +796,8 @@ export default function CompressorTab({}: Props) {
                                         e.currentTarget.value
                                     );
                                     setThreshold(value);
+                                    if (compressorNode)
+                                        compressorNode.threshold.value = value;
                                 }}
                                 className={cn(styles.input, styles.fliped)}
                             />
@@ -619,6 +820,8 @@ export default function CompressorTab({}: Props) {
                                     );
                                     const newRatio = ratioRound(value);
                                     setRatio(newRatio);
+                                    if (compressorNode)
+                                        compressorNode.ratio.value = newRatio;
                                 }}
                             />
                         </div>
@@ -637,6 +840,8 @@ export default function CompressorTab({}: Props) {
                             onChange={(e) => {
                                 const value = parseFloat(e.currentTarget.value);
                                 setAttack(attackRound(value));
+                                if (compressorNode)
+                                    compressorNode.attack.value = value / 1000;
                             }}
                         />
 
@@ -654,6 +859,8 @@ export default function CompressorTab({}: Props) {
                                 const value = parseFloat(e.currentTarget.value);
                                 console.log(value);
                                 setRelease(releaseRound(value));
+                                if (compressorNode)
+                                    compressorNode.release.value = value / 1000;
                             }}
                         />
 
@@ -672,6 +879,39 @@ export default function CompressorTab({}: Props) {
                                 setMakeupGain(value);
                             }}
                         />
+                    </div>
+                    <div id={styles.gainReductionContainer}>
+                        <section id={styles.meterContainer}>
+                            <div
+                                className={styles.meter}
+                                style={
+                                    {
+                                        "--level":
+                                            gainReductionData[
+                                                gainReductionData.length - 1
+                                            ].dbLevel / -21,
+                                        "--peak": peakHoldGR.push(
+                                            gainReductionData[
+                                                gainReductionData.length - 1
+                                            ].dbLevel / -21
+                                        ),
+                                    } as CSSProperties
+                                }
+                            >
+                                <span></span>
+                                <b>GR</b>
+                            </div>
+                            <ul>
+                                <li>0</li>
+                                <li>3</li>
+                                <li>6</li>
+                                <li>9</li>
+                                <li>12</li>
+                                <li>15</li>
+                                <li>18</li>
+                                <li>21</li>
+                            </ul>
+                        </section>
                     </div>
                 </section>
             </section>
@@ -776,3 +1016,72 @@ function releaseRound(value: number): number {
         ...newInputLevelData.filter((dataPoint) => dataPoint.time >= -5),
     ];
 } */
+
+function bandAverage(input: Float32Array, groupSize = 64) {
+    const bands = Math.floor(input.length / groupSize);
+    const out = new Float32Array(bands);
+    for (let b = 0; b < bands; b++) {
+        let sum = 0;
+        for (let i = 0; i < groupSize; i++) {
+            sum += input[b * groupSize + i];
+        }
+        out[b] = sum / groupSize;
+    }
+    return out;
+}
+
+function upsampleLinear(input: Float32Array, targetBins = 1024) {
+    const out = new Float32Array(targetBins);
+    for (let i = 0; i < targetBins; i++) {
+        const pos = (i / (targetBins - 1)) * (input.length - 1);
+        const i0 = Math.floor(pos);
+        const i1 = Math.min(i0 + 1, input.length - 1);
+        const t = pos - i0;
+        out[i] = input[i0] * (1 - t) + input[i1] * t;
+    }
+    return out;
+}
+
+const average = (array: any[]) => array.reduce((a, b) => a + b) / array.length;
+
+class SlidingMax {
+    private cacheSize = 32;
+    private cacheArray: number[] = [];
+
+    constructor(private windowMs: number) {}
+
+    push(timeMs: number, valueDb: number) {
+        this.cacheArray.push(valueDb);
+
+        //if (this.cacheArray.length > this.cacheSize) {
+        this.cacheArray = this.cacheArray.slice(-this.cacheSize);
+        let avg = average(this.cacheArray);
+        return avg;
+        //}
+
+        if (this.cacheArray.length < this.cacheSize) {
+            let avg = average(this.cacheArray);
+            return avg;
+        }
+    }
+}
+
+class SlidingMax_OLD {
+    private q: { t: number; v: number }[] = [];
+    constructor(private windowMs: number) {}
+
+    push(timeMs: number, valueDb: number) {
+        // Alte Einträge entfernen
+        const cutoff = timeMs - this.windowMs;
+        while (this.q.length && this.q[0].t < cutoff) this.q.shift();
+
+        // Monotone Queue pflegen: entferne alle kleineren Werte hinten
+        while (this.q.length && this.q[this.q.length - 1].v <= valueDb) {
+            this.q.pop();
+        }
+        this.q.push({ t: timeMs, v: valueDb });
+
+        // Aktuelles Maximum ist vorne
+        return this.q[0].v;
+    }
+}

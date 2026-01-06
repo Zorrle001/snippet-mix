@@ -12,11 +12,13 @@ import homeStyles from "@/styles/HomeStyles.module.scss";
 import styles from "@/styles/SnippetPageStyle.module.scss";
 import CompressorTab from "./tabs/CompressorTab";
 import EqualizerTab from "./tabs/EqualizerTab";
+import RTATab from "./tabs/RTATab";
 
 type Props = {};
 
 export enum ChannelPageTabs {
     Input,
+    RTA,
     EQ,
     Gate,
     Comp,
@@ -85,7 +87,9 @@ export default function ChannelPage({}: Props) {
                     setSelectedChannelObj(null);
                 }}
             />
-            {tab == ChannelPageTabs.EQ ? (
+            {tab == ChannelPageTabs.RTA ? (
+                <RTATab />
+            ) : tab == ChannelPageTabs.EQ ? (
                 <EqualizerTab />
             ) : tab == ChannelPageTabs.Comp ? (
                 <CompressorTab />
@@ -118,6 +122,14 @@ export default function ChannelPage({}: Props) {
                         onClick={() => setTab(ChannelPageTabs.Input)}
                     >
                         Input
+                    </div>
+                    <div
+                        className={
+                            tab == ChannelPageTabs.RTA ? styles.active : ""
+                        }
+                        onClick={() => setTab(ChannelPageTabs.RTA)}
+                    >
+                        RTA
                     </div>
                     <div
                         className={

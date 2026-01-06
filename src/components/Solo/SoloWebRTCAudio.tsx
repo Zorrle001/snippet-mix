@@ -12,6 +12,7 @@ let ws: WebSocket | null = null;
 let pc: RTCPeerConnection | null = null;
 let meterAnalyser: AnalyserNode | null = null;
 let realtimeAnalyser: AnalyserNode | null = null;
+let compressorNode: DynamicsCompressorNode | null;
 
 export default function SoloWebRTCAudio() {
     //const pcRef = useSoloWebRTCStore((state) => state.pcRef);
@@ -32,6 +33,9 @@ export default function SoloWebRTCAudio() {
     );
     const setRealtimeAnalyser = useSoloWebRTCStore(
         (state) => state.setRealtimeAnalyser
+    );
+    const setCompressorNode = useSoloWebRTCStore(
+        (state) => state.setCompressorNode
     );
 
     console.warn("RENDERING SOLO WEBRTC AUDIO");
@@ -134,6 +138,7 @@ export default function SoloWebRTCAudio() {
 
     function disconnect() {
         if (ws) ws.close();
+        // EVTL REMOVE
         //cleanup();
     }
 
@@ -256,26 +261,46 @@ export default function SoloWebRTCAudio() {
                 latencyHint: "interactive",
             }); */
             meterAnalyser = audioContext.createAnalyser();
-            meterAnalyser.fftSize = 2048; // -> ~43ms Analysefenster bei 48kHz
-            meterAnalyser.smoothingTimeConstant = 0;
+            //meterAnalyser.fftSize = 2048; // -> ~43ms Analysefenster bei 48kHz
+            meterAnalyser.fftSize = 8192 /*4096*/;
+            //meterAnalyser.smoothingTimeConstant = 0.3;
+            meterAnalyser.minDecibels = -100;
+            meterAnalyser.maxDecibels = 0;
 
             realtimeAnalyser = audioContext.createAnalyser();
             realtimeAnalyser.fftSize = 32; // 2.6ms
             realtimeAnalyser.smoothingTimeConstant = 0;
 
+            compressorNode = audioContext.createDynamicsCompressor();
+            compressorNode.threshold.value = -35;
+            compressorNode.knee.value = 0;
+            compressorNode.attack.value = 50 / 1000;
+            compressorNode.ratio.value = 2;
+            compressorNode.release.value = 80 / 1000;
+            compressorNode.channelCount = 1;
             // DIRECT PLAYBACK - SIMPLE!
             //audio = new Audio();
             audio.srcObject = stream;
             audio.autoplay = true;
             audio.volume = 1.0;
 
+            /* const nullGain = audioContext.createGain();
+            nullGain.gain.value = 0;
+            compressorNode.connect(nullGain); */ // oder: connect(silentDestination)
+
             // Also connect to AudioContext for monitoring
             const source = audioContext.createMediaStreamSource(stream);
             const destination = audioContext.createMediaStreamDestination();
             source
+
                 .connect(meterAnalyser)
+
                 .connect(realtimeAnalyser)
+                .connect(compressorNode)
                 .connect(destination);
+
+            // PARALLEL ROUTE
+            //meterAnalyser.connect(compressorNode);
 
             audio.play().catch((e) => {
                 log("Audio play error: " + e.message);
@@ -288,6 +313,7 @@ export default function SoloWebRTCAudio() {
 
             setMeterAnalyser(meterAnalyser);
             setRealtimeAnalyser(realtimeAnalyser);
+            setCompressorNode(compressorNode);
         } catch (error: any) {
             log("Audio setup error: " + error.message);
         }
@@ -522,6 +548,8 @@ export default function SoloWebRTCAudio() {
         } else if (status === SoloWebRTCStatus.STREAMING) {
             //handlePlay();
             disconnect();
+            // TODO: Make instant reconnect possible!
+            //connect();
         } else {
             console.warn("Unhandled status: " + status);
         }

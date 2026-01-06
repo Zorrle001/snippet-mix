@@ -14,72 +14,224 @@
 
     padding: 3rem;
 
+    padding-left: 1.5rem;
+
     #leftPart {
         position: relative;
         //width: 100%;
         //height: 100%;
 
-        width: calc(min(40cqw - 3.6rem, 100cqh - 30px) + 3.6rem);
-        height: calc(min(40cqw - 3.6rem, 100cqh - 30px) + 30px);
+        width: 100%;
+        height: 100%;
+
+        //width: calc(min(40cqw - 3.6rem, 100cqh - 30px) + 3.6rem);
+        //height: calc(min(40cqw - 3.6rem, 100cqh - 30px) + 30px);
 
         flex-grow: 0;
         flex-shrink: 0;
 
-        div.compressorDot {
-            position: absolute;
-            width: fit-content;
-            height: fit-content;
+        //display: flex;
+        //align-items: center;
+        //justify-content: center;
+
+        display: grid;
+        grid-template-columns: 4.5rem 1fr;
+        gap: 1.5rem;
+        //justify-content: center;
+        //justify-items: center;
+        align-items: center;
+        //overflow: hidden;
+
+        #meterContainer {
+            flex-shrink: 0;
+            height: 70%;
+            width: 4.5rem;
+            //background-color: blue;
 
             display: flex;
-            flex-direction: column;
+            //flex-direction: column;
+            //gap: 1rem;
+            align-items: center;
+            justify-content: center;
 
-            user-select: none;
-            -webkit-user-select: none;
+            //margin-right: 0.5rem;
 
-            --color: green;
+            padding: 1rem 0.5rem;
 
-            .circle {
+            //padding-left: 1.5rem;
+            //border: 2px solid rgba(255, 255, 255, 0.6);
+            border-radius: 0.4rem;
+            //background-color: rgba(22, 22, 22, 0.8);
+            //backdrop-filter: blur(4px);
+
+            ul {
+                //display: none;
+                list-style: none;
                 width: 2rem;
-                height: 2rem;
-                border: 2px solid var(--color);
-                background-color: color-mix(
-                    in hsl,
-                    var(--color),
-                    transparent 50%
-                );
-                border-radius: 100%;
+                height: calc(100% - 1.5rem);
+                color: white;
 
-                display: grid;
-                place-content: center;
+                margin-top: 1.5rem;
 
-                cursor: pointer;
+                // FIX OFFSET ISSUE
+                padding-bottom: 0.2rem;
 
-                > p {
-                    font-size: 1rem;
-                    color: white;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: center;
+                //overflow: hidden;
+
+                li {
+                    display: grid;
+                    place-content: center;
+                    height: 0px;
+
+                    color: gray;
+
+                    font-size: 0.85rem;
                     font-weight: 600;
-                    pointer-events: none;
-                    text-align: center;
                 }
             }
 
-            > p {
-                font-size: 1rem;
-                color: lightgray;
-                font-weight: 500;
-                margin-top: 0.25rem;
-                pointer-events: none;
+            .meter {
+                //display: flex;
+
+                position: relative;
+                width: 0.75rem;
+                height: calc(100% - 1.5rem);
+                border: 1px solid black;
+                background-color: rgb(59, 59, 59);
+
+                margin-top: 1.5rem;
+
+                --level: 0;
+                --peak: 0.5;
+                --level-color: #4caf50;
+                --peak-hold-color: white;
+
+                //rgba(255, 0, 0, 0.8)
+                background-image: linear-gradient(
+                        to top,
+                        transparent 0%,
+                        transparent calc(var(--peak) * 100% - 2px),
+                        var(--peak-hold-color) calc(var(--peak) * 100% - 1px),
+                        var(--peak-hold-color) calc(var(--peak) * 100% + 1px),
+                        transparent calc(var(--peak) * 100% + 1px),
+                        transparent 100%
+                    ),
+                    linear-gradient(
+                        to top,
+                        var(--level-color) 0%,
+                        var(--level-color) calc(var(--level) * 100%),
+                        #222 calc(var(--level) * 100%),
+                        #222 100%
+                    );
+
+                &.muted {
+                    --level-color: #494949;
+                    --peak-hold-color: rgb(165, 165, 165);
+                }
+
+                b {
+                    position: absolute;
+                    top: -1.5rem;
+                    //bottom: -1rem;
+                    //left: 0;
+                    font-size: 0.8rem;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
+                    height: 1rem;
+                    position: absolute;
+                    //bottom: -1.25rem;
+                    color: white;
+                }
             }
         }
 
-        div.compressorLevelDot {
-            position: absolute;
-            width: 0.75rem;
-            height: 0.75rem;
-            border-radius: 100%;
-            transform: translate(-50%, -50%);
+        #compressorContainer {
+            position: relative;
+            width: 100%;
+            //height: 100%;
+            aspect-ratio: 1 / 1;
 
-            background-color: white;
+            margin-top: 30px;
+
+            //width: calc(min(40cqw - 3.6rem, 100cqh - 30px) + 3.6rem);
+            //height: calc(min(40cqw - 3.6rem, 100cqh - 30px) + 30px);
+
+            // +3.6rem in Width
+            // and +30px in height for labels
+            width: calc(
+                min(45cqw - 5rem - 1.5rem - 3.6rem, 100cqh - 30px - 2rem) +
+                    3.6rem
+            );
+            height: calc(
+                min(45cqw - 5rem - 1.5rem - 3.6rem, 100cqh - 30px - 2rem) + 30px
+            );
+
+            svg {
+                overflow: visible !important;
+            }
+
+            div.compressorDot {
+                position: absolute;
+                width: fit-content;
+                height: fit-content;
+
+                display: flex;
+                flex-direction: column;
+
+                user-select: none;
+                -webkit-user-select: none;
+
+                --color: green;
+
+                .circle {
+                    width: 2rem;
+                    height: 2rem;
+                    border: 2px solid var(--color);
+                    background-color: color-mix(
+                        in hsl,
+                        var(--color),
+                        transparent 50%
+                    );
+                    border-radius: 100%;
+
+                    display: grid;
+                    place-content: center;
+
+                    cursor: pointer;
+
+                    > p {
+                        font-size: 1rem;
+                        color: white;
+                        font-weight: 600;
+                        pointer-events: none;
+                        text-align: center;
+                    }
+                }
+
+                > p {
+                    font-size: 1rem;
+                    color: lightgray;
+                    font-weight: 500;
+                    margin-top: 0.25rem;
+                    pointer-events: none;
+                }
+            }
+
+            div.compressorLevelDot {
+                position: absolute;
+                width: 0.75rem;
+                height: 0.75rem;
+                border-radius: 100%;
+                transform: translate(-50%, -50%);
+
+                background-color: white;
+            }
         }
     }
 
@@ -111,10 +263,13 @@
 
         #sliderSection {
             position: relative;
-            padding: 3rem;
+            padding-top: 3rem;
+
+            padding-bottom: 0px;
+            padding-right: 0px;
 
             display: grid;
-            grid-template-columns: 10rem 1fr;
+            grid-template-columns: 10rem 1fr auto;
             gap: 2rem;
 
             #horizontal {
@@ -196,6 +351,124 @@
                 > span {
                     text-align: center;
                     margin-bottom: 0.5rem;
+                }
+            }
+
+            #gainReductionContainer {
+                margin-left: 1rem;
+
+                #meterContainer {
+                    flex-shrink: 0;
+                    height: 100%;
+                    width: calc(0.75rem + 2rem);
+                    //background-color: blue;
+
+                    display: flex;
+                    //flex-direction: column;
+                    //gap: 1rem;
+                    align-items: center;
+                    justify-content: center;
+
+                    //margin-right: 0.5rem;
+
+                    //padding: 1rem 0.5rem;
+                    padding-top: 0.25rem;
+
+                    //padding-left: 1.5rem;
+                    //border: 2px solid rgba(255, 255, 255, 0.6);
+                    border-radius: 0.4rem;
+                    //background-color: rgba(22, 22, 22, 0.8);
+                    //backdrop-filter: blur(4px);
+
+                    ul {
+                        //display: none;
+                        list-style: none;
+                        width: 2rem;
+                        height: calc(100% - 1.5rem);
+                        color: white;
+
+                        margin-top: 1.5rem;
+
+                        // FIX OFFSET ISSUE
+                        padding-bottom: 0.2rem;
+
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-between;
+                        align-items: center;
+                        //overflow: hidden;
+
+                        li {
+                            display: grid;
+                            place-content: center;
+                            height: 0px;
+
+                            color: gray;
+
+                            font-size: 0.85rem;
+                            font-weight: 600;
+                        }
+                    }
+
+                    .meter {
+                        //display: flex;
+
+                        position: relative;
+                        width: 0.75rem;
+                        height: calc(100% - 1.5rem);
+                        border: 1px solid black;
+                        background-color: rgb(59, 59, 59);
+
+                        margin-top: 1.5rem;
+
+                        --level: 0;
+                        --peak: 0.5;
+                        --level-color: red;
+                        --peak-hold-color: white;
+
+                        //rgba(255, 0, 0, 0.8)
+                        // FOR DOWN METER: bottom
+                        background-image: linear-gradient(
+                                to bottom,
+                                transparent 0%,
+                                transparent calc(var(--peak) * 100% - 2px),
+                                var(--peak-hold-color)
+                                    calc(var(--peak) * 100% - 1px),
+                                var(--peak-hold-color)
+                                    calc(var(--peak) * 100% + 1px),
+                                transparent calc(var(--peak) * 100% + 1px),
+                                transparent 100%
+                            ),
+                            // FOR DOWN METER: bottom
+                            linear-gradient(
+                                    to bottom,
+                                    var(--level-color) 0%,
+                                    var(--level-color) calc(var(--level) * 100%),
+                                    #222 calc(var(--level) * 100%),
+                                    #222 100%
+                                );
+
+                        &.muted {
+                            --level-color: #494949;
+                            --peak-hold-color: rgb(165, 165, 165);
+                        }
+
+                        b {
+                            position: absolute;
+                            top: -1.5rem;
+                            //bottom: -1rem;
+                            //left: 0;
+                            font-size: 0.8rem;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            width: 100%;
+                            height: 1rem;
+                            position: absolute;
+                            //bottom: -1.25rem;
+                            color: white;
+                        }
+                    }
                 }
             }
         }

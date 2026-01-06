@@ -6,6 +6,10 @@
     //padding: 5rem;
     padding: 3rem;
 
+    display: grid;
+    gap: 1rem;
+    grid-template-rows: calc(100% - 10rem - 1rem - 2rem) 10rem 1rem;
+
     /*@media (hover: hover) {
         .recharts-wrapper {
             pointer-events: none;
@@ -92,5 +96,17 @@
             user-select: none;
             -webkit-user-select: none;
         }*/
+    }
+
+    canvas {
+        width: calc(100% - 70px - 30px);
+        height: 100%;
+        background-color: transparent;
+
+        outline: 1px solid #464646;
+        border-radius: 1rem;
+        overflow: hidden;
+
+        margin-left: 70px;
     }
 }
