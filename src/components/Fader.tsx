@@ -257,7 +257,10 @@ export default function Fader({
                         <li
                             style={{
                                 top: 100 - dbToFaderPos(0) * 100 + "%",
+                                color: "#e5e5e5",
+                                fontWeight: 500,
                             }}
+                            className={styles.white}
                         >
                             0
                         </li>
@@ -288,6 +291,13 @@ export default function Fader({
                             }}
                         >
                             20
+                        </li>
+                        <li
+                            style={{
+                                top: 100 - dbToFaderPos(-25) * 100 + "%",
+                            }}
+                        >
+                            25
                         </li>
                         <li
                             style={{
@@ -414,23 +424,16 @@ const MAX_DB = 10; // +10 dB
 const UNITY_DB = 0; // 0 dB (unity gain)
 
 // Pixel-accurate positions extracted from better image
-const FADER_SCALE_POINTS = [
-    { pos: 0.0, db: -138 }, // -∞ (bottom)
-    { pos: 0.06, db: -60 }, // -60dB
-    { pos: 0.14, db: -40 }, // -40dB
-    { pos: 0.25, db: -30 }, // -30dB
-    { pos: 0.32, db: -25 }, // -25dB
-    { pos: 0.4, db: -20 }, // -20dB
-    { pos: 0.51, db: -15 }, // -15dB
-    { pos: 0.63, db: -10 }, // -10dB
-    { pos: 0.74, db: -5 }, // -5dB
-    { pos: 0.84, db: 0 }, // 0dB (unity gain)
-    { pos: 0.92, db: 5 }, // +5dB
-    { pos: 1.0, db: 10 }, // +10dB (top)
-];
 
-// Find unity gain position (0dB)
-const UNITY_POS = 0.84;
+const fader_pos_section_10db = 1 / 9.5;
+
+const FADER_SCALE_POINTS = [
+    { pos: fader_pos_section_10db * 0, db: -138 }, // -∞ (bottom)
+    { pos: fader_pos_section_10db * 0.5, db: -60 }, // -60dB
+    { pos: fader_pos_section_10db * 1, db: -40 }, // -40dB
+    { pos: fader_pos_section_10db * 1.5, db: -30 }, // -30dB
+    { pos: fader_pos_section_10db * 9.5, db: 10 }, // +10dB (top)
+];
 
 /**
  * Converts fader position (0-1) to decibel value using pixel-accurate interpolation
@@ -458,7 +461,7 @@ function faderPosToDb(pos: number): number {
 }
 
 /**
- * Converts decibel value to fader position using pixel-accurate interpolation
+ * UPDATED - Converts decibel value to fader position using pixel-accurate interpolation
  * @param db - Decibel value from -138dB to +10dB
  * @returns Fader position from 0 to 1
  */
@@ -483,7 +486,7 @@ function dbToFaderPos(db: number): number {
 }
 
 /**
- * Converts raw audio value back to fader position (0-1)
+ * UPDATED - Converts raw audio value back to fader position (0-1)
  * @param value - Raw value from -8832 to 640 (must be integer)
  * @returns Fader position from 0 to 1
  */
@@ -493,20 +496,10 @@ function valueToFaderPos(value: number): number {
     value = Math.max(-8832, Math.min(640, value));
 
     // Convert raw value to dB first
-    let db: number;
-    if (value <= -8832) {
-        db = MIN_DB;
-    } else if (value >= 640) {
-        db = MAX_DB;
-    } else if (value === 0) {
-        db = 0;
-    } else if (value > 0) {
-        // Between 0 and +10dB
-        db = (value / 640) * 10;
-    } else {
-        // Between -138dB and 0dB
-        db = MIN_DB + ((value + 8832) / 8832) * 138;
-    }
+    // f: value = 64 * dB   <->   db = value / 64
+    // min-value = 64 * -138 = -8832
+    // max-value = 64 * 10 = 640
+    let db: number = value / 64;
 
     // Convert dB to position using pixel-accurate interpolation
     return dbToFaderPos(db);
@@ -521,26 +514,15 @@ function faderPosToValue(pos: number): number {
     // Clamp position to valid range
     pos = Math.max(0, Math.min(1, pos));
 
-    const db = faderPosToDb(pos);
+    const dB = faderPosToDb(pos);
 
-    // Convert dB to raw value based on your original mapping
-    let rawValue: number;
-    if (db <= MIN_DB) {
-        rawValue = -8832;
-    } else if (db >= MAX_DB) {
-        rawValue = 640;
-    } else if (db === 0) {
-        rawValue = 0;
-    } else if (db > 0) {
-        // Between 0dB and +10dB: linear interpolation
-        rawValue = (db / 10) * 640;
-    } else {
-        // Between -138dB and 0dB: linear interpolation
-        rawValue = -8832 + ((db + 138) / 138) * 8832;
-    }
+    // f: value = 64 * dB   <->   db = value / 64
+    // min-value = 64 * -138 = -8832
+    // max-value = 64 * 10 = 640
+    let value: number = 64 * dB;
 
     // QUANTIZE to integer
-    return Math.round(rawValue);
+    return Math.round(value);
 }
 
 /**
